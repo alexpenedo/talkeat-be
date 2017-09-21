@@ -1,17 +1,18 @@
 'use strict'
 
-var mongoose = require('mongoose');
+var moongose = require('mongoose');
 var app = require('./app');
-var port = process.env.PORT || 3977;
+var port = process.env.PORT  || 3977;
 
-mongoose.connect('mongodb://localhost:27017/talkeat', (err, res) => {
-    if (err) {
+moongose.connect('mongodb://localhost:27017/talkeat', (err, res) => {
+    if (err){
         throw err;
-    } else {
-        console.log("Mongo conection OK");
-
+    }
+    else{
+        console.log("MongoDB OK");
         app.listen(port, function () {
-            console.log("API listen at http://localhost:" + port);
+            console.log("Server listen at "+port);
         });
     }
 });
+
