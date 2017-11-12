@@ -8,8 +8,13 @@ var UserSchema = Schema({
     surname: String,
     email: String,
     password: String,
-    role: String,
-    image: String
+    image: String,
+    postalCode: String,
+    address: String,
+    country: String
 });
 
-module.exports = mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);
+
+module.exports = User;
+
