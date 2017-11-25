@@ -42,7 +42,6 @@ function create(req, res, next) {
 function login(req, res, next) {
     const email = req.body.email.toLowerCase();
     const password = req.body.password;
-    console.log(email);
     User.findOne({ email }).exec().then(user => {
         assert.ok(bcrypt.compareSync(password, user.password));
         const token = jwt.sign({
@@ -82,58 +81,6 @@ function load(req, res, next, id) {
         .catch(e => next(e));
 }
 
-function updateUser(req, res) {
-    var userId = req.params.id;
-    var update = req.body;
-
-    if (userId != req.user.sub) {
-        return res.status(500).send({ message: 'Error al actualizar el usuario. No tienes permisos' });
-    }
-    User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
-        if (!Utils.errorFoundAndResponse(res, err, userUpdated)) {
-            res.status(200).send({ userUpdated });
-        }
-    });
-}
-
-
-
-function uploadImage(req, res) {
-    var userId = req.params.id;
-    var file_name = "No subido...";
-
-    if (req.files) {
-        var file_path = req.files.image.path;
-        var file_split = file_path.split("\/");
-        var file_name = file_split[2];
-        var ext_split = file_name.split("\.");
-        var file_ext = ext_split[1];
-
-        if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'gif') {
-            User.findByIdAndUpdate(userId, { image: file_name }, (err, userUpdated) => {
-                if (!Utils.errorFoundAndResponse(res, err, userUpdated)) {
-                    res.status(200).send({ image: file_name, user: userUpdated });
-                }
-            });
-        }
-    }
-    else {
-        res.status(400).send({ message: 'No se ha subido ninguna imagen' });
-    }
-}
-
-
-function getImageFile(req, res) {
-    var imageFile = req.params.imageFile;
-    var path_file = './uploads/users/' + imageFile;
-    fs.exists(path_file, (exists) => {
-        if (exists) {
-            res.sendFile(path.resolve(path_file));
-        } else {
-            res.status(404).send({ message: 'No existe la imagen' });
-        }
-    });
-}
 
 function getUsers(req, res) {
     User.find()
@@ -141,4 +88,4 @@ function getUsers(req, res) {
         .catch(e => next(e));
 }
 
-export default { create, login, updateUser, uploadImage, getImageFile, getUsers }
+export default { create, login, getUsers }
