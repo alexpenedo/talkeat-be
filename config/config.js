@@ -9,7 +9,7 @@ const envVarsSchema = Joi.object({
     .allow(['development', 'production', 'test', 'provision'])
     .default('development'),
   PORT: Joi.number()
-    .default(4040),
+    .default(3977),
   MONGOOSE_DEBUG: Joi.boolean()
     .when('NODE_ENV', {
       is: Joi.string().equal('development'),
@@ -25,7 +25,7 @@ const envVarsSchema = Joi.object({
 }).unknown()
   .required();
 
-const { error, value: envVars } = Joi.validate(process.env, envVarsSchema);
+const { error, value: oenvVars } = Joi.validate(process.env, envVarsSchema);
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
 }
