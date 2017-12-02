@@ -4,7 +4,7 @@ import httpStatus from 'http-status';
 import APIError from '../../utils/APIError';
 import MenuComponent from './menuComponent'
 
-const MenuTemplateSchema = new mongoose.Schema({
+const MenuSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -29,30 +29,46 @@ const MenuTemplateSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    date: {
+        type: Date,
+        required: true
+    },
+    postalCode: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-MenuTemplateSchema.method({
+MenuSchema.method({
 });
 
 
-MenuTemplateSchema.statics = {
+MenuSchema.statics = {
     /**
-    * Get MenuTemplate
-    * @param {ObjectId} id - The objectId of menuTemplate.
-    * @returns {Promise<User, APIError>}
+    * Get Menu
+    * @param {ObjectId} id - The objectId of menu.
+    * @returns {Promise<Menu, APIError>}
     */
     get(id) {
         return this.findById(id)
             .exec()
-            .then((menuTemplate) => {
-                if (menuTemplate) {
-                    return menuTemplate;
+            .then((menu) => {
+                if (menu) {
+                    return menu;
                 }
-                const err = new APIError('No such menuTemplate exists!', httpStatus.NOT_FOUND);
+                const err = new APIError('No such menu exists!', httpStatus.NOT_FOUND);
                 return Promise.reject(err);
             });
     }
@@ -60,7 +76,6 @@ MenuTemplateSchema.statics = {
 };
 
 /**
- * @typedef MenuTemplate
+ * @typedef Menu
  */
-export default mongoose.model('MenuTemplate', MenuTemplateSchema);
-
+export default mongoose.model('Menu', MenuSchema);

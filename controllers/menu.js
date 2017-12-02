@@ -1,5 +1,5 @@
 
-import MenuTemplate from '../models/menu/menuTemplate';
+import MenuTemplate from '../models/menu/menu';
 import httpStatus from 'http-status';
 import APIError from '../utils/APIError';
 import config from '../config/config';
@@ -10,15 +10,15 @@ import assert from 'assert';
  */
 function load(req, res, next, id) {
     MenuTemplate.get(id)
-        .then((menuTemplate) => {
-            req.menuTemplate = menuTemplate;
+        .then((menu) => {
+            req.menu = menu;
             return next();
         })
         .catch(e => next(e));
 }
 
 /**
- * Create new menuTemplate
+ * Create new menu
  * @property {string} req.body.name - The name of menu.
  * @property {string} req.body.description - The description of menu.
  * @property {array} req.body.starters - The array of starters.
@@ -30,14 +30,14 @@ function load(req, res, next, id) {
  * @returns {MenuTemplate}
  */
 function create(req, res, next) {
-    let menuTemplate = new MenuTemplate(req.body);
-    menuTemplate.save().then(menuTemplate => {
-        res.status(200).send(menuTemplate)
+    let menu = new Menu(req.body);
+    menu.save().then(menu => {
+        res.status(200).send(menu)
     }).catch(e => next(e));
 }
 
 /**
- * Edit menuTemplate
+ * Edit menu
  * @property {string} req.body.name - The name of menu.
  * @property {string} req.body.description - The description of menu.
  * @property {array} req.body.starters - The array of starters.
@@ -49,19 +49,19 @@ function create(req, res, next) {
  * @returns {MenuTemplate}
  */
 function update(req, res, next) {
-    let menuTemplate = req.menuTemplate;
-    Object.assign(menuTemplate, req.body);
-    menuTemplate.save().then(menuTemplate => {
-        res.status(200).send(menuTemplate)
+    let menu = req.menu;
+    Object.assign(menu, req.body);
+    menuTemplate.save().then(menu => {
+        res.status(200).send(menu)
     }).catch(e => next(e));
 }
 
 /**
  * Get MenuTemplate
- * @returns {MenuTemplate}
+ * @returns {Menu}
  */
 function get(req, res) {
-    return res.json(req.menuTemplate);
+    return res.json(req.menu);
 }
 
 

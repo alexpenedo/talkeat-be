@@ -1,0 +1,50 @@
+import Promise from 'bluebird';
+import mongoose, { MongooseDocument, Schema } from 'mongoose';
+import httpStatus from 'http-status';
+import APIError from '../utils/APIError';
+
+const BookingSchema = new mongoose.Schema({
+    date: {
+        type: Date,
+        required: true
+    },
+    guest: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    menu: {
+        type: Schema.Types.ObjectId,
+        ref: 'Menu',
+        required: true
+    }
+});
+
+
+BookingSchema.method({
+});
+
+BookingSchema.statics = {
+    /**
+    * Get Booking
+    * @param {ObjectId} id - The objectId of menu.
+    * @returns {Promise<Booking, APIError>}
+    */
+    get(id) {
+        return this.findById(id)
+            .exec()
+            .then((booking) => {
+                if (booking) {
+                    return booking;
+                }
+                const err = new APIError('No such booking exists!', httpStatus.NOT_FOUND);
+                return Promise.reject(err);
+            });
+    }
+
+};
+
+/**
+ * @typedef Booking
+ */
+export default mongoose.model('Booking', BookingSchema);

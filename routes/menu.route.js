@@ -1,5 +1,5 @@
 import express from 'express';
-import menuTemplateController from '../controllers/menu'
+import menuController from '../controllers/menu'
 import expressJwt from 'express-jwt';
 import config from '../config/config';
 
@@ -7,16 +7,16 @@ const router = express.Router();
 
 router.route('/')
     .post(expressJwt({ secret: config.jwtSecret }),
-    menuTemplateController.create);
+    menuController.create);
 
 
-router.route('/:menuTemplateId')
+router.route('/:menuId')
     .get(expressJwt({ secret: config.jwtSecret }),
-    menuTemplateController.get)
+    menuController.get)
     .put(expressJwt({ secret: config.jwtSecret }),
-    menuTemplateController.update);
+    menuController.update);
 
-/** Load menuTemplate when API with menuTemplateId route parameter is hit */
-router.param('menuTemplateId', menuTemplateController.load);
+/** Load menuTemplate when API with menuId route parameter is hit */
+router.param('menuId', menuController.load);
 
 export default router;
