@@ -49,7 +49,7 @@ function login(req, res, next) {
         }, config.jwtSecret);
         return res.json({
             token,
-            email: user.email
+            user
         });
     }).catch(e => {
         const err = new APIError('Authentication error', httpStatus.UNAUTHORIZED, true);
