@@ -4,6 +4,7 @@ import httpStatus from 'http-status';
 import APIError from '../utils/APIError';
 import config from '../config/config';
 import assert from 'assert';
+import { Menu } from '../../frontend/src/app/models/menu/menu';
 
 /**
  * Load menuTemplate and append to req.
@@ -27,7 +28,7 @@ function load(req, res, next, id) {
  * @property {array} req.body.guests - The number of giests.
  * @property {number} req.body.price - The price of menu.
  * @property {User} req.body.host - The host of menu .
- * @returns {MenuTemplate}
+ * @returns {Menu}
  */
 function create(req, res, next) {
     let menu = new Menu(req.body);
@@ -43,10 +44,10 @@ function create(req, res, next) {
  * @property {array} req.body.starters - The array of starters.
  * @property {array} req.body.mains - The array of mains.
  * @property {array} req.body.desserts - The array of desserts.
- * @property {array} req.body.guests - The number of giests.
+ * @property {number} req.body.guests - The number of giests.
  * @property {number} req.body.price - The price of menu.
  * @property {User} req.body.host - The host of menu .
- * @returns {MenuTemplate}
+ * @returns {Menu}
  */
 function update(req, res, next) {
     let menu = req.menu;
