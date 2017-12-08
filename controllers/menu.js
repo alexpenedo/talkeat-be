@@ -1,15 +1,14 @@
-
-import { Menu } from '../models/menu/menu';
+import Menu from '../models/menu/menu';
 import httpStatus from 'http-status';
 import APIError from '../utils/APIError';
 import config from '../config/config';
 import assert from 'assert';
 
 /**
- * Load menuTemplate and append to req.
+ * Load menu and append to req.
  */
 function load(req, res, next, id) {
-    MenuTemplate.get(id)
+    Menu.get(id)
         .then((menu) => {
             req.menu = menu;
             return next();
@@ -27,6 +26,9 @@ function load(req, res, next, id) {
  * @property {array} req.body.guests - The number of giests.
  * @property {number} req.body.price - The price of menu.
  * @property {User} req.body.host - The host of menu .
+ * @property {User} req.body.address - The address of menu .
+ * @property {User} req.body.postalCode - The postalCode of menu .
+ * @property {User} req.body.country - The country of menu .
  * @returns {Menu}
  */
 function create(req, res, next) {
@@ -51,18 +53,65 @@ function create(req, res, next) {
 function update(req, res, next) {
     let menu = req.menu;
     Object.assign(menu, req.body);
-    menuTemplate.save().then(menu => {
+    menu.save().then(menu => {
         res.status(200).send(menu)
     }).catch(e => next(e));
 }
 
 /**
- * Get MenuTemplate
+ * Get Menu
  * @returns {Menu}
  */
 function get(req, res) {
     return res.json(req.menu);
 }
 
+/**
+ * Get Menus
+ * @returns {Menu}
+ */
+function find(req, res, next) {
+    let postalCode = req.query.postalCode;
+    let guests = req.query.persons;
+    let date = req.query.date;
+    let type = req.query.type;
 
-export default { create, get, load, update }
+    Menu.find({
+        postalCode, guests, date: {
+            $gte: getStartDate(date, type),
+            $lte: getEndDate(date, type)
+        }
+    }).exec()
+        .then(menus => {
+            console.log(menus);
+            res.status(200).send(menus);
+        }).catch(e => next(e));
+}
+
+function getEndDate(date, type) {
+    let end = new Date(date);
+    if (type === 'dinner') {
+        end.setHours(23);ac
+        end.setMinutes(59);
+    }
+    else {
+        end.setHours(17);
+        end.setMinutes(59);
+    }
+    return end;
+}
+function getStartDate(date, type) {
+    let start = new Date(date);
+    if (type === 'dinner') {
+        start.setHours(18);
+        start.setMinutes(0);
+    }
+    else {
+        start.setHours(12);
+        start.setMinutes(0);
+    }
+    return start;
+}
+
+
+export default { create, find, get, load, update }

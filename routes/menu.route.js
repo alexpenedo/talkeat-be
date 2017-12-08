@@ -7,7 +7,9 @@ const router = express.Router();
 
 router.route('/')
     .post(expressJwt({ secret: config.jwtSecret }),
-    menuController.create);
+    menuController.create)
+    .get(expressJwt({ secret: config.jwtSecret }),
+    menuController.find);
 
 
 router.route('/:menuId')
@@ -16,7 +18,7 @@ router.route('/:menuId')
     .put(expressJwt({ secret: config.jwtSecret }),
     menuController.update);
 
-/** Load menuTemplate when API with menuId route parameter is hit */
+/** Load menu when API with menuId route parameter is hit */
 router.param('menuId', menuController.load);
 
 export default router;
