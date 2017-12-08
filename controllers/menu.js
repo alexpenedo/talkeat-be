@@ -1,10 +1,9 @@
 
-import MenuTemplate from '../models/menu/menu';
+import { Menu } from '../models/menu/menu';
 import httpStatus from 'http-status';
 import APIError from '../utils/APIError';
 import config from '../config/config';
 import assert from 'assert';
-import { Menu } from '../../frontend/src/app/models/menu/menu';
 
 /**
  * Load menuTemplate and append to req.
