@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt-nodejs';
 import assert from 'assert';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
 
 /**
  * Create new user
@@ -59,26 +60,56 @@ function login(req, res, next) {
     });
 }
 
-function uploadPhoto(req, res, next) {
+/**
+ * Update user
+ * @property {string} req.body._id - The id of user.
+ * @property {string} req.body.name - The name of user.
+ * @property {string} req.body.surname - The surname of user.
+ * @property {string} req.body.email - The email of user.
+ * @property {string} req.body.mobileNumber - The mobileNumber of user.
+ * @property {string} req.body.password - The password of user.
+ * @property {string} req.body.postalCode - The postalCode of user.
+ * @property {string} req.body.address - The address of user.
+ * @property {string} req.body.country - The country of user.
+ * @returns {User}
+ */
+function update(req, res, next) {
     User.get(req.params.userId)
         .then((user) => {
+            Object.assign(user, req.body);
+            user.save().then(user => {
+                console.log(user);
+                res.status(200).send(user);
+            }).catch(e => next(e))
+        })
+        .catch(e => next(e));
+}
+
+function uploadPhoto(req, res, next) {
+    User.findById(req.params.userId).select("+picture")
+        .exec().then((user) => {
             let upload = multer({ dest: './uploads/' }).single('file');
             upload(req, res, function (err) {
                 if (err) {
                     next(err);
                 }
+                fs.unlink(user.picture, (err) => {
+                    console.error(err);
+                });
                 let path = req.file.path;
                 user.picture = path;
                 user.save().then(user => {
-                    res.status(200).send(user)
+                    res.status(200).send(user);
                 }).catch(e => next(e));
+
             });
         })
         .catch(e => next(e));
 }
+
 function getPhoto(req, res, next) {
-    User.get(req.params.userId)
-        .then((user) => {
+    User.findById(req.params.userId).select("+picture")
+        .exec().then((user) => {
             if (user.picture) {
                 res.sendFile(path.resolve(user.picture));
             }
@@ -105,4 +136,4 @@ function getUsers(req, res) {
         .catch(e => next(e));
 }
 
-export default { create, login, getUsers, uploadPhoto, getPhoto }
+export default { create, login, getUsers, update, uploadPhoto, getPhoto }
