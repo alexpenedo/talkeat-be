@@ -91,7 +91,7 @@ function find(req, res, next) {
 function getEndDate(date, type) {
     let end = new Date(date);
     if (type === 'dinner') {
-        end.setHours(23);ac
+        end.setHours(23);
         end.setMinutes(59);
     }
     else {
