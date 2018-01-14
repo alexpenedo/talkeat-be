@@ -93,9 +93,11 @@ function uploadPhoto(req, res, next) {
                 if (err) {
                     next(err);
                 }
-                fs.unlink(user.picture, (err) => {
-                    console.error(err);
-                });
+                if (user.picture != undefined) {
+                    fs.unlink(user.picture, (err) => {
+                        console.error(err);
+                    });
+                }
                 let path = req.file.path;
                 user.picture = path;
                 user.save().then(user => {

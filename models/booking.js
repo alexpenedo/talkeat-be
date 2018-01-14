@@ -17,6 +17,11 @@ const BookingSchema = new mongoose.Schema({
         type: Schema.Types.ObjectId,
         ref: 'Menu',
         required: true
+    },
+    confirmed: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 
