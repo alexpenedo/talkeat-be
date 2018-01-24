@@ -72,12 +72,16 @@ function get(req, res) {
  */
 function find(req, res, next) {
     let postalCode = req.query.postalCode;
-    let guests = req.query.persons;
+    let persons = req.query.persons;
     let date = req.query.date;
     let type = req.query.type;
 
     Menu.find({
-        postalCode, guests, date: {
+        postalCode,
+        available: {
+            $gte: persons
+        },
+        date: {
             $gte: getStartDate(date, type),
             $lte: getEndDate(date, type)
         }

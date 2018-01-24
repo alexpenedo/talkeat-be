@@ -20,6 +20,9 @@ const MenuSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    available: {
+        type: Number
+    },
     price: {
         type: Number,
         required: true
@@ -49,6 +52,11 @@ const MenuSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     }
+});
+
+MenuSchema.pre('save', function (next) {
+    this.available = this.guests;
+    next();
 });
 
 MenuSchema.method({
