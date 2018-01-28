@@ -6,7 +6,6 @@ import APIError from '../utils/APIError';
 const BookingSchema = new mongoose.Schema({
     date: {
         type: Date,
-        required: true
     },
     guest: {
         type: Schema.Types.ObjectId,
@@ -27,6 +26,11 @@ const BookingSchema = new mongoose.Schema({
 
 
 BookingSchema.method({
+});
+
+BookingSchema.pre('save', function (next) {
+    this.date = new Date();
+    next();
 });
 
 BookingSchema.statics = {

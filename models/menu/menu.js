@@ -21,7 +21,8 @@ const MenuSchema = new mongoose.Schema({
         required: true
     },
     available: {
-        type: Number
+        type: Number,
+        min: 0
     },
     price: {
         type: Number,
