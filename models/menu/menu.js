@@ -52,7 +52,12 @@ const MenuSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    },
+    location: {
+        type: [Number],
+        index: '2d'
     }
+
 });
 
 MenuSchema.pre('save', function (next) {

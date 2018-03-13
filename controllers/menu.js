@@ -71,13 +71,19 @@ function get(req, res) {
  * @returns {Menu}
  */
 function find(req, res, next) {
-    let postalCode = req.query.postalCode;
+    let coords = [];
+    coords[0] = req.query.longitude;
+    coords[1] = req.query.latitude;
     let persons = req.query.persons;
     let date = req.query.date;
     let type = req.query.type;
+    let maxDistance = 10 / 111.12;
 
     Menu.find({
-        postalCode,
+        location: {
+            $near: coords,
+            $maxDistance: maxDistance
+        },
         available: {
             $gte: persons
         },
