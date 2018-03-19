@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import util from 'util';
 import http from 'http';
 import SocketIO from 'socket.io';
+import chatController from './controllers/chat';
 
 
 // config should be imported before importing any other file
@@ -35,9 +36,15 @@ let server = http.Server(app);
 let io = new SocketIO(server);
 
 io.on('connection', (socket) => {
-    console.log(socket);
-    console.info("connection io");
+    socket.on('message', (m) => {
+        chatController.pushMessageOnChat(m.chat, m.from, m.message);
+        io.sockets.emit('message', m);
+    });
+    socket.on('disconnect', () => {
+        console.log('Client disconnected');
+    });
 });
+
 
 // listen on port config.port
 server.listen(config.port, () => {

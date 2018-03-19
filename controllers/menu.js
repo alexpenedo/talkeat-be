@@ -54,7 +54,7 @@ function update(req, res, next) {
     let menu = req.menu;
     Object.assign(menu, req.body);
     menu.save().then(menu => {
-        res.status(200).send(menu)
+        res.status(httpStatus.OK).send(menu)
     }).catch(e => next(e));
 }
 
@@ -67,7 +67,7 @@ function get(req, res) {
 }
 
 /**
- * Get Menus
+ * Get Menus near 10km by coors and date and type
  * @returns {Menu}
  */
 function find(req, res, next) {
@@ -93,8 +93,7 @@ function find(req, res, next) {
         }
     }).exec()
         .then(menus => {
-            console.log(menus);
-            res.status(200).send(menus);
+            res.status(httpStatus.OK).send(menus);
         }).catch(e => next(e));
 }
 

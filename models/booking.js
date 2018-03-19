@@ -12,6 +12,13 @@ const BookingSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    host: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    menuDate: {
+        type: Date,
+    },
     menu: {
         type: Schema.Types.ObjectId,
         ref: 'Menu',
