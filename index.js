@@ -38,6 +38,10 @@ let io = new SocketIO(server);
 io.on('connection', (socket) => {
     socket.on('message', (m) => {
         chatController.pushMessageOnChat(m.chat, m.from, m.message);
+        m.chat.messages.push({
+            message: m.message,
+            from: m.from
+        });
         io.sockets.emit('message', m);
     });
     socket.on('disconnect', () => {
