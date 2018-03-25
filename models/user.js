@@ -27,8 +27,7 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     picture: {
-        type: String,
-        select: false
+        type: String
     },
     postalCode: {
         type: String,

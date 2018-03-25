@@ -86,7 +86,7 @@ function update(req, res, next) {
 }
 
 function uploadPhoto(req, res, next) {
-    User.findById(req.params.userId).select("+picture")
+    User.findById(req.params.userId)
         .exec().then((user) => {
             let upload = multer({ dest: './uploads/' }).single('file');
             upload(req, res, function (err) {
@@ -110,7 +110,7 @@ function uploadPhoto(req, res, next) {
 }
 
 function getPhoto(req, res, next) {
-    User.findById(req.params.userId).select("+picture")
+    User.findById(req.params.userId)
         .exec().then((user) => {
             if (user.picture) {
                 res.sendFile(path.resolve(user.picture));

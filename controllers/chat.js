@@ -45,14 +45,13 @@ function findByGuestIdOrHostId(req, res, next) {
     let hostId = req.query.hostId;
     let guestId = req.query.guestId;
     let query = {
-        menuDate: {
-            $gte: new Date()
-        }, $or: [{ host: hostId },
+        $or: [{ host: hostId },
         { guest: guestId }]
     }
-    Chat.find(query).exec()
+    Chat.find(query)
+        .populate('guest host')
+        .exec()
         .then(chats => {
-            console.log(chats);
             res.status(httpStatus.OK).send(chats);
         }).catch(e => next(e));
 }
