@@ -43,7 +43,6 @@ function pushMessageOnChat(id, user, content) {
 }
 
 function updateUserConnectionDates(user, chatIds) {
-    console.log(chatIds);
     let date = new Date();
     let queryHost = {
         $and: [

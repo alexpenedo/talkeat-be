@@ -57,9 +57,12 @@ io.on('connection', (socket) => {
             io.sockets.emit('newChat', chat);
         });
     });
+    socket.on('closeChat', (c) => {
+        chatController.updateUserConnectionDates(socket.user, [c._id]);
+    });
     socket.on('disconnect', () => {
         if (socket.chats !== undefined) {
-            chatController.updateUserConnectionDates(socket.user, socket.chats.map(chat => chat._id))
+            chatController.updateUserConnectionDates(socket.user, socket.chats.map(chat => chat._id));
         }
         console.log('Client disconnected');
     });
