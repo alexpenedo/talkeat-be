@@ -5,8 +5,6 @@ import httpStatus from 'http-status';
 import APIError from '../utils/APIError';
 import config from '../config/config';
 import assert from 'assert';
-import chatController from './chat';
-
 
 /**
  * Load booking and append to req.
@@ -36,8 +34,7 @@ function create(req, res, next) {
                 { runValidators: true })
                 .exec().then(menu =>
                     booking.save().then(booking => {
-                        chatController.createFirstMessageByBooking(booking);
-                        res.status(httpStatus.OK).send(menu)
+                        res.status(httpStatus.OK).send(booking);
                     }).catch(e => next(e))
                 );
         });
@@ -77,7 +74,6 @@ function findByGuestIdOrHostId(req, res, next) {
     }
     Booking.find(query).exec()
         .then(bookings => {
-            console.log(bookings);
             res.status(httpStatus.OK).send(bookings);
         }).catch(e => next(e));
 }

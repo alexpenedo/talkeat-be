@@ -23,6 +23,14 @@ const ChatSchema = new mongoose.Schema({
         ref: 'User',
     },
     messages: [Message],
+    hostLastConnection: {
+        type: Date,
+        required: true
+    },
+    guestLastConnection: {
+        type: Date,
+        required: true
+    },
 });
 
 

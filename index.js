@@ -36,6 +36,14 @@ let server = http.Server(app);
 let io = new SocketIO(server);
 
 io.on('connection', (socket) => {
+    socket.on('online', (user) => {
+        socket.user = user;
+    });
+
+    socket.on('chatsOpened', (chats) => {
+        socket.chats = chats;
+    });
+
     socket.on('message', (m) => {
         chatController.pushMessageOnChat(m.chat, m.from, m.message);
         m.chat.messages.push({
@@ -44,7 +52,15 @@ io.on('connection', (socket) => {
         });
         io.sockets.emit('message', m);
     });
+    socket.on('firstMessage', (b) => {
+        chatController.createFirstMessageByBooking(b).then(chat => {
+            io.sockets.emit('newChat', chat);
+        });
+    });
     socket.on('disconnect', () => {
+        if (socket.chats !== undefined) {
+            chatController.updateUserConnectionDates(socket.user, socket.chats.map(chat => chat._id))
+        }
         console.log('Client disconnected');
     });
 });

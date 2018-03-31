@@ -34,7 +34,7 @@ function load(req, res, next, id) {
 function create(req, res, next) {
     let menu = new Menu(req.body);
     menu.save().then(menu => {
-        res.status(200).send(menu)
+        res.status(200).send(menu);
     }).catch(e => next(e));
 }
 
