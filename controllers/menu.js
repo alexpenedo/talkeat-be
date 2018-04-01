@@ -77,6 +77,7 @@ function find(req, res, next) {
     let persons = req.query.persons;
     let date = req.query.date;
     let type = req.query.type;
+    let userId = req.query.user;
     let maxDistance = 10 / 111.12;
 
     Menu.find({
@@ -90,6 +91,9 @@ function find(req, res, next) {
         date: {
             $gte: getStartDate(date, type),
             $lte: getEndDate(date, type)
+        },
+        host: {
+            $ne: userId
         }
     }).exec()
         .then(menus => {
