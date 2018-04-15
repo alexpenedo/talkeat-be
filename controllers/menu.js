@@ -66,10 +66,7 @@ function get(req, res) {
     return res.json(req.menu);
 }
 
-/**
- * Get Menus near 10km by coors and date and type
- * @returns {Menu}
- */
+
 function find(req, res, next) {
     let coords = [];
     coords[0] = req.query.longitude;
@@ -79,7 +76,6 @@ function find(req, res, next) {
     let type = req.query.type;
     let userId = req.query.user;
     let maxDistance = 10 / 111.12;
-
     Menu.find({
         location: {
             $near: coords,

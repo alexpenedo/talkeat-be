@@ -57,11 +57,13 @@ app.use((req, res, next) => {
 
 
 // error handler, send stacktrace only during development
-app.use((err, req, res, next) => // eslint-disable-line no-unused-vars
-  res.status(err.status).json({
-    message: err.isPublic ? err.message : httpStatus[err.status],
-    stack: config.env === 'development' ? err.stack : {}
-  })
+app.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
+    console.error(err);
+    res.status(err.status).json({
+      message: err.isPublic ? err.message : httpStatus[err.status],
+      stack: config.env === 'development' ? err.stack : {}
+    })
+  }
 );
 
 export default app;

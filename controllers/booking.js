@@ -41,27 +41,18 @@ function create(req, res, next) {
 }
 
 /**
- * Get bookings by guestId
- * @returns {Booking}
- */
-function findByGuestId(req, res, next) {
-    let guestId = req.query.guestId;
-
-
-}
-
-/**
  * Get bookings by hostId or guestId
  * @returns {Booking}
  */
 function findByGuestIdOrHostId(req, res, next) {
     let hostId = req.query.hostId;
     let guestId = req.query.guestId;
-    let query = {
-        menuDate: {
+    let dateFrom = req.query.dateFrom;
+    let query = {};
+    if (dateFrom !== undefined)
+        queru.menuDate = {
             $gte: new Date()
-        }
-    }
+        };
     if (hostId !== undefined && guestId === undefined) {
         query.host = hostId;
     }
@@ -72,7 +63,7 @@ function findByGuestIdOrHostId(req, res, next) {
         query.$or = [{ host: hostId },
         { guest: guestId }];
     }
-    Booking.find(query).exec()
+    Booking.find(query).populate("menu host rate").sort({ date: -1 }).exec()
         .then(bookings => {
             res.status(httpStatus.OK).send(bookings);
         }).catch(e => next(e));

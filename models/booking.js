@@ -28,6 +28,10 @@ const BookingSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    rate: {
+        type: Schema.Types.ObjectId,
+        ref: 'Rate'
     }
 });
 
