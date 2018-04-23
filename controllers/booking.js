@@ -10,7 +10,7 @@ import assert from 'assert';
  * Load booking and append to req.
  */
 function load(req, res, next, id) {
-    Booking.get(id)
+    Booking.findById(id).populate("menu host rate")
         .then((booking) => {
             req.booking = booking;
             return next();
@@ -38,6 +38,15 @@ function create(req, res, next) {
                     }).catch(e => next(e))
                 );
         });
+}
+
+
+/**
+ * Get Booking
+ * @returns {Booking}
+ */
+function get(req, res) {
+    return res.json(req.booking);
 }
 
 /**
@@ -70,4 +79,4 @@ function findByGuestIdOrHostId(req, res, next) {
 }
 
 
-export default { create, findByGuestIdOrHostId }
+export default { create, findByGuestIdOrHostId, get, load }
