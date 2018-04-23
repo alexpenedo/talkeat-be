@@ -19,7 +19,7 @@ function get(req, res) {
  * Load booking and append to req.
  */
 function load(req, res, next, id) {
-    Booking.get(id)
+    Booking.findById(id).populate("menu host rate")
         .then((booking) => {
             req.booking = booking;
             return next();
@@ -47,6 +47,15 @@ function create(req, res, next) {
                     }).catch(e => next(e))
                 );
         });
+}
+
+
+/**
+ * Get Booking
+ * @returns {Booking}
+ */
+function get(req, res) {
+    return res.json(req.booking);
 }
 
 /**
@@ -78,4 +87,5 @@ function findByGuestIdOrHostId(req, res, next) {
         }).catch(e => next(e));
 }
 
-export default { create, findByGuestIdOrHostId, load, get }
+
+export default { create, findByGuestIdOrHostId, get, load }

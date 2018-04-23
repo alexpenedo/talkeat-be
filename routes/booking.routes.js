@@ -9,7 +9,13 @@ router.route('/')
     .post(expressJwt({ secret: config.jwtSecret }),
         bookingController.create)
     .get(expressJwt({ secret: config.jwtSecret }),
-        bookingController.findByGuestIdOrHostId)
+        bookingController.findByGuestIdOrHostId);
+router.route('/:bookingId')
+    .get(expressJwt({ secret: config.jwtSecret }),
+        bookingController.get);
+
+/** Load booking when API with bookingId route parameter is hit */
+router.param('bookingId', bookingController.load);
 
 router.route('/:bookingId')
         .get(expressJwt({ secret: config.jwtSecret }),
