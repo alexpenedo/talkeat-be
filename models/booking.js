@@ -52,6 +52,7 @@ BookingSchema.statics = {
     */
     get(id) {
         return this.findById(id)
+            .populate("menu")
             .exec()
             .then((booking) => {
                 if (booking) {

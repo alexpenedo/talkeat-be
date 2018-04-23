@@ -12,9 +12,10 @@ router.route('/login')
     .post(userController.login);
 router.route('/:userId')
     .put(expressJwt({ secret: config.jwtSecret }),
-    userController.update);
+        userController.update);
 router.route('/:userId/picture')
     .post(expressJwt({ secret: config.jwtSecret }),
-    userController.uploadPhoto)
+        userController.uploadPhoto)
     .get(userController.getPhoto)
+
 export default router;

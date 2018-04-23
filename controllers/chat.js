@@ -27,7 +27,15 @@ function createFirstMessageByBooking(booking) {
         guestLastConnection: date
     })
     return chat.save().then(chat => {
-        return Chat.findById(chat._id).populate('guest host').exec();
+        return Chat.findById(chat._id).populate('guest host')
+            .populate({
+                path: 'booking',
+                model: 'Booking',
+                populate: {
+                    path: 'menu',
+                    model: 'Menu'
+                }
+            }).exec();
     });
 
 }
@@ -98,9 +106,15 @@ function findByGuestIdOrHostId(req, res, next) {
             { guest: guestId }]
         }]
     }
-    Chat.find(query)
-        .populate('guest host')
-        .exec()
+    Chat.find(query).populate('guest host')
+        .populate({
+            path: 'booking',
+            model: 'Booking',
+            populate: {
+                path: 'menu',
+                model: 'Menu'
+            }
+        }).exec()
         .then(chats => {
             res.status(httpStatus.OK).send(chats);
         }).catch(e => next(e));

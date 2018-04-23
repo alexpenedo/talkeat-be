@@ -6,6 +6,15 @@ import APIError from '../utils/APIError';
 import config from '../config/config';
 import assert from 'assert';
 
+
+/**
+ * Get Menu
+ * @returns {Menu}
+ */
+function get(req, res) {
+    return res.json(req.booking);
+}
+
 /**
  * Load booking and append to req.
  */
@@ -69,5 +78,4 @@ function findByGuestIdOrHostId(req, res, next) {
         }).catch(e => next(e));
 }
 
-
-export default { create, findByGuestIdOrHostId }
+export default { create, findByGuestIdOrHostId, load, get }

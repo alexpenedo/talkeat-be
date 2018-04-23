@@ -11,4 +11,11 @@ router.route('/')
     .get(expressJwt({ secret: config.jwtSecret }),
         bookingController.findByGuestIdOrHostId)
 
+router.route('/:bookingId')
+        .get(expressJwt({ secret: config.jwtSecret }),
+        bookingController.get);
+    
+    /** Load menu when API with menuId route parameter is hit */
+    router.param('bookingId', bookingController.load);    
+
 export default router;
