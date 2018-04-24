@@ -78,7 +78,6 @@ function update(req, res, next) {
         .then((user) => {
             Object.assign(user, req.body);
             user.save().then(user => {
-                console.log(user);
                 res.status(200).send(user);
             }).catch(e => next(e))
         })
@@ -98,8 +97,7 @@ function uploadPhoto(req, res, next) {
                         console.error(err);
                     });
                 }
-                let path = req.file.path;
-                user.picture = path;
+                user.picture = req.file.filename;
                 user.save().then(user => {
                     res.status(200).send(user);
                 }).catch(e => next(e));
@@ -110,12 +108,8 @@ function uploadPhoto(req, res, next) {
 }
 
 function getPhoto(req, res, next) {
-    User.findById(req.params.userId)
-        .exec().then((user) => {
-            if (user.picture) {
-                res.sendFile(path.resolve(user.picture));
-            }
-        });
+    let picture = req.query.id;
+    res.sendFile(path.resolve('./uploads/' + picture));
 }
 
 /**
@@ -138,4 +132,17 @@ function getUsers(req, res) {
         .catch(e => next(e));
 }
 
-export default { create, login, getUsers, update, uploadPhoto, getPhoto }
+/**
+ * Get User
+ * @returns {User}
+ */
+function get(req, res, next) {
+    User.get(req.params.userId)
+        .then((user) => {
+            res.status(200).send(user);
+        })
+        .catch(e => next(e));
+}
+
+
+export default { get, create, login, getUsers, update, uploadPhoto, getPhoto }
