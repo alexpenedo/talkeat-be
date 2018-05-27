@@ -3,6 +3,7 @@ import util from 'util';
 import http from 'http';
 import SocketIO from 'socket.io';
 import chatController from './controllers/chat';
+import seed from './config/seed';
 
 
 // config should be imported before importing any other file
@@ -72,6 +73,7 @@ io.on('connection', (socket) => {
 // listen on port config.port
 server.listen(config.port, () => {
     console.info(`server started on port ${config.port} (${config.env})`);
+    // seed.createTestData();
 });
 
 export default app;

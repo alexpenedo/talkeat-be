@@ -86,7 +86,6 @@ function find(req, res, next) {
         },
         date: {
             $gte: getStartDate(date, type),
-            $gte: new Date(),
             $lte: getEndDate(date, type)
         },
         host: {

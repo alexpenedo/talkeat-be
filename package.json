@@ -4,11 +4,13 @@
   "description": "talkeat",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js  --exec babel-node --presets es2015,stage-2"
+    "start": "nodemon index.js  --exec babel-node --presets es2015,stage-2",
+    "test": "mocha tests --compilers js:babel-core/register"
   },
   "author": "Alex Penedo",
   "license": "MIT",
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "bcrypt-nodejs": "0.0.3",
     "bluebird": "^3.5.1",
     "body-parser": "^1.17.1",
@@ -21,6 +23,7 @@
     "express-jwt": "^5.3.1",
     "express-validation": "^1.0.2",
     "express-winston": "^2.5.1",
+    "faker": "^4.1.0",
     "helmet": "^3.12.0",
     "http-status": "^1.0.1",
     "joi": "^13.2.0",
@@ -31,14 +34,19 @@
     "mongoose-pagination": "^1.0.0",
     "morgan": "^1.9.0",
     "multer": "^1.3.0",
+    "sinon": "^5.0.2",
+    "sinon-mongoose": "^2.1.1",
     "socket.io": "^2.1.0",
     "typescript": "^2.8.3",
     "winston": "^2.4.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
     "nodemon": "^1.17.3"
   }
 }

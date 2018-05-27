@@ -43,7 +43,7 @@ function create(req, res, next) {
  * @returns {*}
  */
 function login(req, res, next) {
-    const email = req.body.email.toLowerCase();
+    const email = req.body.email;
     const password = req.body.password;
     User.findOne({ email }).exec().then(user => {
         assert.ok(bcrypt.compareSync(password, user.password));
