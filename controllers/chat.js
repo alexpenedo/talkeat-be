@@ -1,23 +1,18 @@
 import Booking from '../models/booking';
 import Menu from '../models/menu/menu';
 import httpStatus from 'http-status';
-import APIError from '../utils/APIError';
-import config from '../config/config';
-import assert from 'assert';
 import Chat from '../models/chat/chat';
-import Message from '../models/chat/message';
-
 
 
 function createFirstMessageByBooking(booking) {
     let date = new Date();
-    let message = {
+    const message = {
         date: date,
         message: "I would like to book this menu",
         from: booking.guest
-    }
+    };
 
-    let chat = new Chat({
+    const chat = new Chat({
         booking,
         menuDate: booking.menuDate,
         host: booking.host,
@@ -25,7 +20,8 @@ function createFirstMessageByBooking(booking) {
         messages: [message],
         hostLastConnection: date,
         guestLastConnection: date
-    })
+    });
+
     return chat.save().then(chat => {
         return Chat.findById(chat._id).populate('guest host')
             .populate({
@@ -46,8 +42,7 @@ function pushMessageOnChat(id, user, content) {
         message: content,
         from: user
     }
-    Chat.findByIdAndUpdate(id, { $push: { messages: message } })
-        .exec();
+    return Chat.findByIdAndUpdate(id, {$push: {messages: message}}).exec();
 }
 
 function updateUserConnectionDates(user, chatIds) {
@@ -64,7 +59,7 @@ function updateUserConnectionDates(user, chatIds) {
                     $gte: new Date()
                 }
             },
-            { host: user._id }
+            {host: user._id}
         ]
     }
     let queryGuest = {
@@ -81,18 +76,14 @@ function updateUserConnectionDates(user, chatIds) {
                     $gte: new Date()
                 }
             },
-            { guest: user._id }
+            {guest: user._id}
         ]
     }
-    Chat.update(queryHost, { hostLastConnection: date }, { multi: true }).exec();
-    Chat.update(queryGuest, { guestLastConnection: date }, { multi: true }).exec();
+    Chat.update(queryHost, {hostLastConnection: date}, {multi: true}).exec();
+    Chat.update(queryGuest, {guestLastConnection: date}, {multi: true}).exec();
 }
 
 
-/**
- * Get chats by hostId or guestId
- * @returns {Chat}
- */
 function findByGuestIdOrHostId(req, res, next) {
     let hostId = req.query.hostId;
     let guestId = req.query.guestId;
@@ -102,8 +93,8 @@ function findByGuestIdOrHostId(req, res, next) {
                 $gte: new Date()
             }
         }, {
-            $or: [{ host: hostId },
-            { guest: guestId }]
+            $or: [{host: hostId},
+                {guest: guestId}]
         }]
     }
     Chat.find(query).populate('guest host')
@@ -121,4 +112,4 @@ function findByGuestIdOrHostId(req, res, next) {
 }
 
 
-export default { createFirstMessageByBooking, findByGuestIdOrHostId, pushMessageOnChat, updateUserConnectionDates }
+export default {createFirstMessageByBooking, findByGuestIdOrHostId, pushMessageOnChat, updateUserConnectionDates}

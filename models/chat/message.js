@@ -1,7 +1,4 @@
-import Promise from 'bluebird';
-import mongoose, { MongooseDocument, Schema } from 'mongoose';
-import httpStatus from 'http-status';
-import APIError from '../../utils/APIError';
+import mongoose, {MongooseDocument, Schema} from 'mongoose';
 
 const Message = new mongoose.Schema({
     date: {

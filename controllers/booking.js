@@ -1,10 +1,6 @@
 import Booking from '../models/booking';
-import Chat from '../models/chat/chat';
 import Menu from '../models/menu/menu';
 import httpStatus from 'http-status';
-import APIError from '../utils/APIError';
-import config from '../config/config';
-import assert from 'assert';
 
 
 /**
@@ -41,7 +37,7 @@ function create(req, res, next) {
             Menu.update({ _id: menu._id },
                 { $set: { available } },
                 { runValidators: true })
-                .exec().then(menu =>
+                .exec().then(() =>
                     booking.save().then(booking => {
                         res.status(httpStatus.OK).send(booking);
                     }).catch(e => next(e))

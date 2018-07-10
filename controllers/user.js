@@ -1,4 +1,3 @@
-
 import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import httpStatus from 'http-status';
@@ -107,7 +106,7 @@ function uploadPhoto(req, res, next) {
         .catch(e => next(e));
 }
 
-function getPhoto(req, res, next) {
+function getPhoto(req, res) {
     let picture = req.query.id;
     res.sendFile(path.resolve('./uploads/' + picture));
 }

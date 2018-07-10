@@ -15,8 +15,8 @@ router.get('/health-check', (req, res) =>
 router.use('/users', userRoutes);
 router.use('/menu', menuRoutes);
 router.use('/booking', bookingRoutes);
-router.use('/chat', chatRoutes)
-router.use('/rate', rateRoutes)
+router.use('/chat', chatRoutes);
+router.use('/rate', rateRoutes);
 
 
 export default router;

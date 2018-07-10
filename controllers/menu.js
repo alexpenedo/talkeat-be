@@ -1,8 +1,5 @@
 import Menu from '../models/menu/menu';
 import httpStatus from 'http-status';
-import APIError from '../utils/APIError';
-import config from '../config/config';
-import assert from 'assert';
 
 /**
  * Load menu and append to req.

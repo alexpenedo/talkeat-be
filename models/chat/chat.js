@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import mongoose, { MongooseDocument, Schema } from 'mongoose';
+import mongoose, {Schema} from 'mongoose';
 import httpStatus from 'http-status';
 import APIError from '../../utils/APIError';
 import Message from './message';
@@ -34,15 +34,14 @@ const ChatSchema = new mongoose.Schema({
 });
 
 
-ChatSchema.method({
-});
+ChatSchema.method({});
 
 ChatSchema.statics = {
     /**
-    * Get Message
-    * @param {ObjectId} id - The objectId of menu.
-    * @returns {Promise<Chat, APIError>}
-    */
+     * Get Message
+     * @param {ObjectId} id - The objectId of menu.
+     * @returns {Promise<Chat, APIError>}
+     */
     get(id) {
         return this.findById(id)
             .exec()
