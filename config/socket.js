@@ -8,24 +8,25 @@ let io = new SocketIO(server);
 
 io.on('connection', (socket) => {
     socket.on('online', (user) => {
+        console.log('me uno a ' + user._id);
+        socket.join(user._id);
         socket.user = user;
     });
 
-    socket.on('chatsOpened', (chats) => {
-        socket.chats = chats;
-    });
-
     socket.on('message', (m) => {
-        chatController.pushMessageOnChat(m.chat, m.from, m.message);
-        m.chat.messages.push({
-            message: m.message,
-            from: m.from
+        chatController.pushMessageOnChat(m.chat, m.from, m.message).then(chat => {
+            m.chat.messages.push({
+                message: m.message,
+                from: m.from
+            });
+            io.sockets.in(chat.host).emit('message', m);
+            io.sockets.in(chat.guest).emit('message', m);
         });
-        io.sockets.emit('message', m);
     });
     socket.on('firstMessage', (b) => {
         chatController.createFirstMessageByBooking(b).then(chat => {
-            io.sockets.emit('newChat', chat);
+            io.sockets.in(chat.host._id).emit('newChat', chat);
+            io.sockets.in(chat.guest._id).emit('newChat', chat);
         });
     });
     socket.on('closeChat', (c) => {

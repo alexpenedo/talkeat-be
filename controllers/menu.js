@@ -63,8 +63,15 @@ function get(req, res) {
     return res.json(req.menu);
 }
 
-
 function find(req, res, next) {
+    if (req.query.host) {
+        findHostMenus(req, res, next);
+    } else {
+        findUserMenus(req, res, next);
+    }
+}
+
+function findUserMenus(req, res, next) {
     let coords = [];
     coords[0] = req.query.longitude;
     coords[1] = req.query.latitude;
@@ -94,6 +101,31 @@ function find(req, res, next) {
         }).catch(e => next(e));
 }
 
+function findHostMenus(req, res, next) {
+    let dateFrom = req.query.dateFrom;
+    let dateTo = req.query.dateTo;
+    let query = {};
+    query.host = req.query.host;
+    if (dateFrom !== undefined) {
+        dateFrom = new Date(dateFrom);
+        console.log(dateFrom);
+        query.date = {
+            $gte: dateFrom
+        };
+    }
+    if (dateTo !== undefined) {
+        dateTo = new Date(dateTo);
+        query.date = {
+            $lte: dateTo
+        };
+    }
+    Menu.find(query).sort({date: -1}).exec()
+        .then(menus => {
+            res.status(httpStatus.OK).send(menus);
+        }).catch(e => next(e));
+
+}
+
 function getEndDate(date, type) {
     let end = new Date(date);
     if (type === 'dinner') {
@@ -106,6 +138,7 @@ function getEndDate(date, type) {
     }
     return end;
 }
+
 function getStartDate(date, type) {
     let start = new Date(date);
     if (type === 'dinner') {
@@ -120,4 +153,4 @@ function getStartDate(date, type) {
 }
 
 
-export default { create, find, get, load, update }
+export default {create, find, get, load, update}

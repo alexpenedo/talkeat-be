@@ -12,5 +12,5 @@ router.route('/')
         rateController.getRatesByHostId);
 router.route('/average')
     .get(expressJwt({ secret: config.jwtSecret }),
-        rateController.getAverageByHostId)
+        rateController.getAverageByHostId);
 export default router;

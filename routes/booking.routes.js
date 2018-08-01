@@ -14,14 +14,13 @@ router.route('/:bookingId')
     .get(expressJwt({ secret: config.jwtSecret }),
         bookingController.get);
 
+router.route('/:bookingId/confirm')
+    .get(expressJwt({ secret: config.jwtSecret }),
+        bookingController.confirmBooking);
+
+
+
 /** Load booking when API with bookingId route parameter is hit */
 router.param('bookingId', bookingController.load);
-
-router.route('/:bookingId')
-        .get(expressJwt({ secret: config.jwtSecret }),
-        bookingController.get);
-    
-    /** Load menu when API with menuId route parameter is hit */
-    router.param('bookingId', bookingController.load);    
 
 export default router;
