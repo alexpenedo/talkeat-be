@@ -8,7 +8,7 @@ function get(req, res) {
 }
 
 function load(req, res, next, id) {
-    BookingRepository.findById(id).populate("menu host rate")
+    ChatRepository.findById(id).populate("menus host rate")
         .then((booking) => {
             req.booking = booking;
             return next();
@@ -81,7 +81,7 @@ function findByGuestIdOrHostId(req, res, next) {
         query.$or = [{host: hostId},
             {guest: guestId}];
     }
-    Booking.find(query).populate("menu host rate").sort({date: -1}).exec()
+    Booking.find(query).populate("menus host rate").sort({date: -1}).exec()
         .then(bookings => {
             res.status(httpStatus.OK).send(bookings);
         }).catch(e => next(e));

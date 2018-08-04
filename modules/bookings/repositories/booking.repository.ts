@@ -11,22 +11,22 @@ export class BookingRepository extends BaseRepository<Booking> {
     }
 
     async findByMenuId(menuId: string) {
-        return this.bookingModel.find({menu: menuId}).populate("menu host guest rate").sort({date: -1}).exec()
+        return this.bookingModel.find({menu: menuId}).populate("menus host guest rate").sort({date: -1}).exec()
     }
 
     async findByGuestIdOrderByDateDesc(guestId: string): Promise<Booking[]> {
-        return this.bookingModel.find({guest: guestId}).populate("menu host guest rate").sort({date: -1}).exec();
+        return this.bookingModel.find({guest: guestId}).populate("menus host guest rate").sort({date: -1}).exec();
     }
 
     async findByHostIdOrderByDateDesc(hostId: string): Promise<Booking[]> {
-        return this.bookingModel.find({host: hostId}).populate("menu host guest rate").sort({date: -1}).exec();
+        return this.bookingModel.find({host: hostId}).populate("menus host guest rate").sort({date: -1}).exec();
     }
 
     async findByHostIdOrGuestIdOrderByDateDesc(hostId: string, guestId: string): Promise<Booking[]> {
         return this.bookingModel.find({
             $or: [{host: hostId},
                 {guest: guestId}]
-        }).populate("menu host guest rate").sort({date: -1}).exec();
+        }).populate("menus host guest rate").sort({date: -1}).exec();
     }
 
     async findByGuestIdAndDateFromOrderByDateAsc(guestId: string, dateFrom: Date): Promise<Booking[]> {

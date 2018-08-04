@@ -3,8 +3,10 @@ import {MongooseModule} from '@nestjs/mongoose';
 import config from "../config/config";
 import {UsersModule} from "./users/users.module";
 import {AuthModule} from "./auth/auth.module";
-import {MenusModule} from "./menu/menus.module";
+import {MenusModule} from "./menus/menus.module";
 import {BookingsModule} from "./bookings/bookings.module";
+import {RatesModule} from "./rates/rates.module";
+import {ChatsModule} from "./chat/chats.module";
 
 @Module({
     imports: [
@@ -12,7 +14,9 @@ import {BookingsModule} from "./bookings/bookings.module";
         AuthModule,
         UsersModule,
         MenusModule,
-        BookingsModule
+        BookingsModule,
+        RatesModule,
+        ChatsModule
     ],
 })
 export class ApplicationModule {

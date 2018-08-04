@@ -2,14 +2,14 @@ import {MongooseModule} from '@nestjs/mongoose';
 import {forwardRef, Module} from "@nestjs/common";
 import {BookingRepository} from "./repositories/booking.repository";
 import BookingSchema from "./schemas/booking.schema";
-import {BookingController} from "./booking.controller";
+import {BookingsController} from "./bookings.controller";
 import {BookingService} from "./booking.service";
-import {MenusModule} from "../menu/menus.module";
+import {MenusModule} from "../menus/menus.module";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: 'Booking', schema: BookingSchema}]),
         forwardRef(() => MenusModule)],
-    controllers: [BookingController],
+    controllers: [BookingsController],
     providers: [BookingRepository, BookingService],
     exports: [BookingService]
 })

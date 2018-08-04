@@ -2,8 +2,8 @@ import {BadRequestException, Injectable} from '@nestjs/common';
 import {Model} from 'mongoose';
 import {BookingRepository} from "./repositories/booking.repository";
 import {Booking} from "./interfaces/booking.interface";
-import {MenuService} from "../menu/menu.service";
-import {Menu} from "../menu/interfaces/menu.interface";
+import {MenuService} from "../menus/menu.service";
+import {Menu} from "../menus/interfaces/menu.interface";
 
 @Injectable()
 export class BookingService {

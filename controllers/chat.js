@@ -8,7 +8,7 @@ function createFirstMessageByBooking(booking) {
     let date = new Date();
     const message = {
         date: date,
-        message: "I would like to book this menu",
+        message: "I would like to book this menus",
         from: booking.guest
     };
 
@@ -23,7 +23,7 @@ function createFirstMessageByBooking(booking) {
     });
 
     return chat.save().then(chat => {
-        return BookingRepository.findById(chat._id).populate('guest host')
+        return ChatRepository.findById(chat._id).populate('guest host')
             .populate({
                 path: 'booking',
                 model: 'Booking',
@@ -51,7 +51,7 @@ function pushMessageOnChat(id, content, user) {
     return Chat.findByIdAndUpdate(id, {$push: {messages: message}}).exec();
 }
 
-function updateUserConnectionDates(user, chatIds) {
+function wa(user, chatIds) {
     let date = new Date();
     let queryHost = {
         $and: [
@@ -90,7 +90,7 @@ function updateUserConnectionDates(user, chatIds) {
 }
 
 
-function findByGuestIdOrHostId(req, res, next) {
+function(req, res, next) {
     let hostId = req.query.hostId;
     let guestId = req.query.guestId;
     let query = {

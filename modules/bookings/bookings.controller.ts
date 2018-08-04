@@ -4,8 +4,8 @@ import {Booking} from "./interfaces/booking.interface";
 import {AuthGuard} from "@nestjs/passport";
 import {Status} from "../common/status.enum";
 
-@Controller('menus')
-export class BookingController {
+@Controller('bookings')
+export class BookingsController {
     constructor(private readonly bookingService: BookingService) {
     }
 

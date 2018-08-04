@@ -12,7 +12,7 @@ export class RouterBase {
             res.status(200).send('OK');
         });
         router.use('/users', UserRoutes.routes());
-        router.use('/menu', MenuRoutes.routes());
+        router.use('/menus', MenuRoutes.routes());
         router.use('/booking', BookingRoutes.routes());
         router.use('/chat', ChatRoutes.routes());
         router.use('/rate', RateRoutes.routes());

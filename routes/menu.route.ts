@@ -23,7 +23,7 @@ export class MenuRoutes {
             .get(expressJwt({secret: config.jwtSecret}),
                 bookingController.findByMenuId);
 
-        /** Load menu when API with menuId route parameter is hit */
+        /** Load menus when API with menuId route parameter is hit */
         routes.param('menuId', menuController.load);
         return routes;
     }
