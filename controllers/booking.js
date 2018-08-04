@@ -1,22 +1,14 @@
 import Booking from '../models/booking';
 import Menu from '../models/menu/menu';
 import httpStatus from 'http-status';
-import User from "../models/user";
 
 
-/**
- * Get Menu
- * @returns {Menu}
- */
 function get(req, res) {
     return res.json(req.booking);
 }
 
-/**
- * Load booking and append to req.
- */
 function load(req, res, next, id) {
-    Booking.findById(id).populate("menu host rate")
+    BookingRepository.findById(id).populate("menu host rate")
         .then((booking) => {
             req.booking = booking;
             return next();
@@ -24,12 +16,6 @@ function load(req, res, next, id) {
         .catch(e => next(e));
 }
 
-/**
- * Create new Booking
- * @property {string} req.body.guest - The guest of booking.
- * @property {array} req.body.menu - The menu to book.
- * @returns {Menu}
- */
 function create(req, res, next) {
     let booking = new Booking(req.body);
     Menu.get(booking.menu)
@@ -54,10 +40,6 @@ function confirmBooking(req, res, next) {
     }).catch(e => next(e))
 }
 
-/**
- * Get Booking
- * @returns {Booking}
- */
 function get(req, res) {
     return res.json(req.booking);
 }
@@ -71,10 +53,6 @@ function findByMenuId(req, res, next) {
         }).catch(e => next(e));
 }
 
-/**
- * Get bookings by hostId or guestId
- * @returns {Booking}
- */
 function findByGuestIdOrHostId(req, res, next) {
     let hostId = req.query.hostId;
     let guestId = req.query.guestId;

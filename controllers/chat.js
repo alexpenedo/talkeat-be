@@ -23,7 +23,7 @@ function createFirstMessageByBooking(booking) {
     });
 
     return chat.save().then(chat => {
-        return Chat.findById(chat._id).populate('guest host')
+        return BookingRepository.findById(chat._id).populate('guest host')
             .populate({
                 path: 'booking',
                 model: 'Booking',
@@ -36,11 +36,17 @@ function createFirstMessageByBooking(booking) {
 
 }
 
-function pushMessageOnChat(id, user, content) {
+function findByBookingId(bookingId) {
+    return Chat.findOne({booking: bookingId}).exec();
+}
+
+function pushMessageOnChat(id, content, user) {
     let message = {
         date: new Date(),
-        message: content,
-        from: user
+        message: content
+    };
+    if (user) {
+        message.from = user;
     }
     return Chat.findByIdAndUpdate(id, {$push: {messages: message}}).exec();
 }
@@ -61,7 +67,7 @@ function updateUserConnectionDates(user, chatIds) {
             },
             {host: user._id}
         ]
-    }
+    };
     let queryGuest = {
         $and: [
             {
@@ -96,7 +102,7 @@ function findByGuestIdOrHostId(req, res, next) {
             $or: [{host: hostId},
                 {guest: guestId}]
         }]
-    }
+    };
     Chat.find(query).populate('guest host')
         .populate({
             path: 'booking',
@@ -111,5 +117,19 @@ function findByGuestIdOrHostId(req, res, next) {
         }).catch(e => next(e));
 }
 
+function deleteChat(req, res, next) {
+    const booking = req.body;
+    booking.confirmed = true;
+    booking.save().then(booking => {
+        res.status(200).send(booking);
+    }).catch(e => next(e))
+}
 
-export default {createFirstMessageByBooking, findByGuestIdOrHostId, pushMessageOnChat, updateUserConnectionDates}
+
+export default {
+    createFirstMessageByBooking,
+    findByGuestIdOrHostId,
+    pushMessageOnChat,
+    updateUserConnectionDates,
+    findByBookingId
+}
