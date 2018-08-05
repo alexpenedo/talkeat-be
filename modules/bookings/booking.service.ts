@@ -1,4 +1,4 @@
-import {BadRequestException, Injectable} from '@nestjs/common';
+import {BadRequestException, forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Model} from 'mongoose';
 import {BookingRepository} from "./repositories/booking.repository";
 import {Booking} from "./interfaces/booking.interface";
@@ -7,11 +7,13 @@ import {Menu} from "../menus/interfaces/menu.interface";
 
 @Injectable()
 export class BookingService {
-    constructor(private bookingRepository: BookingRepository, private menuService: MenuService) {
+    constructor(private bookingRepository: BookingRepository,
+                @Inject(forwardRef(() => MenuService))
+                private menuService: MenuService) {
     }
 
     async create(booking: Booking): Promise<Booking> {
-        const menu: Menu = await this.menuService.findById(booking.menu.id);
+        const menu: Menu = await this.menuService.findById(booking.menu._id);
         if (menu.available < 1) {
             throw new BadRequestException('Menu has not availability');
         }
@@ -45,6 +47,7 @@ export class BookingService {
     async findGuestBookingsFinished(guestId: string): Promise<Booking[]> {
         return await this.bookingRepository.findByGuestIdAndDateToOrderByDate(guestId, new Date());
     }
+
     async findGuestBookingsPending(guestId: string): Promise<Booking[]> {
         return await this.bookingRepository.findByGuestIdAndDateFromOrderByDateAsc(guestId, new Date());
     }

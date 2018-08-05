@@ -4,7 +4,6 @@ import {UsersController} from './users.controller';
 import {UserService} from './user.service';
 import {UserSchema} from './schemas/user.schema';
 import {Module} from "@nestjs/common";
-import {JwtService} from "../auth/jwt/jwt.service";
 import {UserRepository} from "./repositories/user.repository";
 
 @Module({

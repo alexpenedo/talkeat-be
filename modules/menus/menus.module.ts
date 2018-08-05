@@ -5,6 +5,7 @@ import MenuSchema from "./schemas/menu.schema";
 import {MenusController} from "./menus.controller";
 import {MenuService} from "./menu.service";
 import {BookingsModule} from "../bookings/bookings.module";
+import {BookingService} from "../bookings/booking.service";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: 'Menu', schema: MenuSchema}]),

@@ -8,15 +8,20 @@ export class RatesController {
     constructor(private readonly rateService: RateService) {
     }
 
+    @Get()
+    async getHostRates(@Query('hostId') hostId) {
+        return await this.rateService.getHostRates(hostId);
+    }
+
+    @Get('average')
+    async getHostAverage(@Query('hostId') hostId) {
+        return await this.rateService.getHostAverageRating(hostId);
+    }
+
     @Post()
     @UseGuards(AuthGuard('jwt'))
     async create(@Body() rate: Rate) {
         return await this.rateService.create(rate);
-    }
-
-    @Get()
-    async getHostRates(@Query('hostId') hostId) {
-        return await this.rateService.getHostRates(hostId);
     }
 
     @Get(':id')
@@ -25,10 +30,6 @@ export class RatesController {
         return await this.rateService.findById(id);
     }
 
-    @Get('average')
-    async getHostAverage(@Query('hostId') hostId) {
-        return await this.rateService.getHostAverageRating(hostId);
-    }
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))

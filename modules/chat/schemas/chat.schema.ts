@@ -1,38 +1,46 @@
 import {Schema} from "mongoose";
 import {Chat} from "../interfaces/chat.interface";
+import {Message} from "./message.schema";
 
 const ChatSchema = new Schema({
-    date: {
-        type: Date,
-    },
-    guest: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
-    host: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-    },
     booking: {
         type: Schema.Types.ObjectId,
         ref: 'Booking',
         required: true
     },
-    comment: {
-        type: String
-    },
-    rate: {
-        type: Number,
+    menuDate: {
+        type: Date,
         required: true
+    },
+    host: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    guest: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+    },
+    messages: [Message],
+    hostLastConnection: {
+        type: Date,
+        required: true
+    },
+    guestLastConnection: {
+        type: Date,
+        required: true
+    },
+    deleted: {
+        type: Boolean
     }
 });
 
-
-ChatSchema.pre<Chat>('save', function (next) {
-    this.date = new Date();
+ChatSchema.pre<Chat>('findOne', function (next) {
+    this.populate('host guest booking');
+    next();
+}).pre<Chat>('find', function (next) {
+    this.populate('host guest booking');
     next();
 });
+
 
 export default ChatSchema;

@@ -1,10 +1,12 @@
-import {BadRequestException, HttpException, HttpStatus, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, Injectable, NotFoundException} from '@nestjs/common';
 import {Model} from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import {UserService} from '../users/user.service';
 import {User} from '../users/interfaces/user.interface';
 import {JwtService} from './jwt/jwt.service';
 import {JwtPayload} from "./interfaces/jwt-payload.interface";
+import * as jwt from 'jsonwebtoken';
+import config from "../../config/config";
 
 @Injectable()
 export class AuthService {
@@ -28,9 +30,9 @@ export class AuthService {
     }
 
     async refreshToken(payload: JwtPayload): Promise<any> {
+        payload = jwt.decode(payload, config.jwtSecret);
         const user: User = await this.jwtService.validateUser(payload);
         const tokens = await this.jwtService.generateToken(user);
-
         return {tokens, user};
     }
 }

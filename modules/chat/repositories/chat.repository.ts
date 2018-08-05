@@ -1,9 +1,9 @@
-import {Injectable} from "injection-js";
 import {BaseRepository} from "../../common/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
 import {Message} from "../interfaces/message.interface";
 import {Chat} from "../interfaces/chat.interface";
+import {Injectable} from "@nestjs/common";
 
 @Injectable()
 export class ChatRepository extends BaseRepository<Chat> {
@@ -15,8 +15,13 @@ export class ChatRepository extends BaseRepository<Chat> {
         return await this.chatModel.findOne({booking: bookingId}).exec();
     }
 
+    async findByBookingIdIn(bookingIds: string[]): Promise<Chat[]> {
+        return await this.chatModel.find({booking: {$in: bookingIds}}).exec();
+    }
+
     async pushChatMessage(id: string, message: Message): Promise<Chat> {
-        return await this.chatModel.findByIdAndUpdate(id, {$push: {messages: message}}).exec();
+        await this.chatModel.findByIdAndUpdate(id, {$push: {messages: message}}).exec();
+        return await this.findById(id);
     }
 
     async findByGuestIdOrHostIdAndDateFrom(hostId: string, guestId: string, dateFrom: Date): Promise<Chat[]> {
@@ -34,21 +39,21 @@ export class ChatRepository extends BaseRepository<Chat> {
             }).exec();
     }
 
-    async updateHostConnectionDateByChatIds(chatIds: string[], hostId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
-        const query = this.buildQueryChatIdsInAndDateFrom(chatIds, dateFrom);
+    async updateHostConnectionDateByChatId(chatId: string, hostId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
+        const query = this.buildQueryChatIdsInAndDateFrom(chatId, dateFrom);
         query.$and.push({host: hostId});
         return await this.chatModel.update(query, {hostLastConnection: connectionDate}, {multi: true}).exec();
     }
 
-    async updateGuestConnectionDateByChatIds(chatIds: string[], guestId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
-        const query = this.buildQueryChatIdsInAndDateFrom(chatIds, dateFrom);
+    async updateGuestConnectionDateByChatId(chatId: string, guestId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
+        const query = this.buildQueryChatIdsInAndDateFrom(chatId, dateFrom);
         query.$and.push({guest: guestId});
-        return await this.chatModel.update(query, {hostLastConnection: connectionDate}, {multi: true}).exec();
+        return await this.chatModel.update(query, {guestLastConnection: connectionDate}, {multi: true}).exec();
     }
 
-    private buildQueryChatIdsInAndDateFrom(chatIds: string[], dateFrom: Date): any {
+    private buildQueryChatIdsInAndDateFrom(chatId: string, dateFrom: Date): any {
         return {
-            $and: [{_id: {$in: chatIds}}, {menuDate: {$gte: dateFrom}}]
+            $and: [{_id: chatId}, {menuDate: {$gte: dateFrom}}]
         }
     }
 }

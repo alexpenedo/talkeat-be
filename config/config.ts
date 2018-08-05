@@ -46,6 +46,10 @@ class Config {
         return this.envVars.NODE_ENV;
     }
 
+    get isDevelopmentEnv(){
+        return this.env==='dev';
+    }
+
     get port() {
         return this.envVars.PORT;
     }

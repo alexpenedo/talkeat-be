@@ -5,6 +5,7 @@ import {User} from '../../users/interfaces/user.interface';
 import {UserService} from '../../users/user.service';
 import config from "../../../config/config";
 import {JwtPayload} from "../interfaces/jwt-payload.interface";
+import {WsException} from "@nestjs/websockets";
 
 @Injectable()
 export class JwtService {
@@ -26,8 +27,22 @@ export class JwtService {
         return {accessToken, refreshToken};
     }
 
-    async validateUser(payload: JwtPayload): Promise<any> {
+    async validateUser(payload): Promise<any> {
         return await this.userService.findById(payload._id);
     }
+
+    async verifyWebsocketToken(token: string): Promise<User> {
+        try {
+            const payload: JwtPayload = jwt.verify(token, config.jwtSecret);
+            const user = await this.userService.findById(payload._id);
+            if (!user) {
+                throw new WsException('Unauthorized access');
+            }
+            return user;
+        } catch (err) {
+            throw new WsException(err.message);
+        }
+    }
+
 
 }

@@ -12,17 +12,19 @@ export class BaseRepository<T extends Document> {
         return this.model.findById(id).exec() as Promise<T>;
     }
 
-    save(item: T): Promise<T> {
+    async save(item: T): Promise<T> {
         const itemToSave = new this.model(item);
-        return itemToSave.save() as Promise<T>;
+        const itemSaved = await itemToSave.save();
+        return this.findById(itemSaved._id);
     }
 
     findAll(): Promise<T[]> {
         return this.model.find({}).exec() as Promise<T[]>;
     }
 
-    update(id: string, newDocument: T): Promise<T> {
-        return this.model.findByIdAndUpdate(id, newDocument).exec() as Promise<T>;
+    async update(id: string, newDocument: T): Promise<T> {
+        await this.model.findByIdAndUpdate(id, newDocument).exec();
+        return this.findById(id);
     }
 
     delete(id: string): Promise<T> {

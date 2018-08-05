@@ -17,5 +17,5 @@ export interface Menu extends Document {
     address: string;
     country: string;
     createdAt: string;
-    location: any;
+    location: any[];
 }

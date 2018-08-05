@@ -36,6 +36,13 @@ const BookingSchema: Schema = new Schema({
 BookingSchema.pre<Booking>('save', function (next) {
     this.date = new Date();
     next();
+}).pre<Booking>('findOne', function (next) {
+    this.populate('host guest menu rate');
+    next();
+}).pre<Booking>('find', function (next) {
+    this.populate('host guest menu rate');
+    next();
 });
+
 
 export default BookingSchema;

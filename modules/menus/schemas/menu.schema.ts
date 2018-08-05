@@ -55,12 +55,16 @@ const MenuSchema = new Schema({
         type: [Number],
         index: '2d'
     }
-
-
 });
 
 MenuSchema.pre<Menu>('save', function (next) {
     this.available = this.guests;
+    next();
+}).pre<Menu>('findOne', function (next) {
+    this.populate('host');
+    next();
+}).pre<Menu>('find', function (next) {
+    this.populate('host');
     next();
 });
 

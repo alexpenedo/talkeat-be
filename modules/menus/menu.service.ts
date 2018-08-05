@@ -1,11 +1,16 @@
-import {Injectable} from '@nestjs/common';
+import {forwardRef, Inject, Injectable} from '@nestjs/common';
 import {Model} from 'mongoose';
 import {MenuRepository} from "./repositories/menu.repository";
 import {Menu} from "./interfaces/menu.interface";
+import {BookingService} from "../bookings/booking.service";
+import {Booking} from "../bookings/interfaces/booking.interface";
+import * as _ from 'lodash';
 
 @Injectable()
 export class MenuService {
-    constructor(private menuRepository: MenuRepository) {
+    constructor(private readonly menuRepository: MenuRepository,
+                @Inject(forwardRef(() => BookingService))
+                private readonly bookingService: BookingService) {
     }
 
     async create(menu: Menu): Promise<Menu> {
@@ -32,12 +37,15 @@ export class MenuService {
         return await this.menuRepository.findByHostIdAndDateFromOrderByDate(userId, new Date());
     }
 
-    async findUserMenus(latitude: number, longitude: number, date: string, type: string, persons: number) {
+    async findUserMenus(latitude: number, longitude: number, date: string, type: string, persons: number, userId?: string) {
         const coordinates: number[] = [latitude, longitude];
-        const userId: string = '';// TODO: Coger el usuario de la request?
         const startDate: Date = this.getStartDate(date, type);
         const endDate: Date = this.getEndDate(date, type);
-        const menuIds = []; //TODO: Coger menuIds de bookingRepository;
+        let menuIds: string[] = [];
+        if (userId) {
+            const bookings: Booking[] = await this.bookingService.findGuestBookingsPending(userId);
+            menuIds = _.map(bookings, 'menu');
+        }
         return await this.menuRepository.findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(coordinates,
             startDate, endDate, persons, menuIds, userId);
     }

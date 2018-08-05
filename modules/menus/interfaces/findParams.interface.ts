@@ -8,4 +8,5 @@ export interface FindParams {
     type?:string;
     host?:string;
     status?: Status;
+    userId?:string;
 }

@@ -33,6 +33,9 @@ const RateSchema = new Schema({
 RateSchema.pre<Rate>('save', function (next) {
     this.date = new Date();
     next();
+}).pre<Rate>('findOne', function (next) {
+    this.populate('host guest booking');
+    next();
 });
 
 export default RateSchema;
