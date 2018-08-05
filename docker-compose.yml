@@ -1,0 +1,24 @@
+version: '3.6'
+services:
+  talkeat-be:
+    image: talkeat-be
+    ports:
+    - "80:80"
+    environment:
+    - NODE_ENV=production
+    - PORT=80
+    - JWT_SECRET=0a6b944d-d2fb-46fc-a85e-0295c986cd9f
+    - MONGO_HOST=mongodb://mongodb/talkeat'
+    - ACCESS_TOKEN_EXPIRES='1h'
+    - REFRESH_TOKEN_EXPIRES='8h'
+    networks:
+      - internal
+  mongodb:
+    image: mongo
+    volumes:
+    - /opt/mongodb:/data/db
+    networks:
+    - internal
+networks:
+  internal:
+    external: false

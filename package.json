@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "prestart:prod": "tsc",
+    "build": "tsc",
     "test": "jest",
-    "start:prod": "node dist/server.js"
+    "start:prod": "node dist/main.js"
   },
   "author": "Alex Penedo",
   "license": "MIT",
