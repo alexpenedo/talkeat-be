@@ -1,52 +1,59 @@
 import {
     Body,
     Controller,
-    Delete, FileInterceptor,
+    Delete,
+    FileInterceptor,
     Get,
     Param,
     Post,
-    Put, Query,
-    Req, Res,
+    Put,
+    Query,
+    Req,
+    Res,
     UploadedFile,
     UseGuards,
-    UseInterceptors
+    UseInterceptors,
+    ValidationPipe
 } from '@nestjs/common';
 import {UserService} from './user.service';
-import {User} from './interfaces/user.interface';
 import {AuthGuard} from '@nestjs/passport';
 import * as path from "path";
+import {ApiImplicitParam, ApiUseTags} from '@nestjs/swagger';
+import {User} from "./domain/user";
+import {GenericAssembler} from "../../common/assemblers/generic-assembler";
 
+@ApiUseTags('Users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly userService: UserService) {
     }
 
     @Get('picture')
-    async getPicture(@Query('id') id, @Res() res) {
+    async getPicture(@Query('id') id: string, @Res() res) {
         res.sendFile(path.resolve('./uploads/' + id))
     }
 
     @Get(':id')
-    @UseGuards(AuthGuard('jwt'))
-    async get(@Param('id') id): Promise<User> {
+    // @UseGuards(AuthGuard('jwt'))
+    async get(@Param('id') id: string): Promise<User> {
         return await this.userService.findById(id);
     }
 
     @Post()
-    async create(@Body() user: User) {
-        return await this.userService.create(user);
+    async create(@Body(new ValidationPipe({transform: true})) user: User) {
+        return await this.userService.create(<User>user);
     }
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))
-    async update(@Param('id') id, @Body() user: User) {
-       return await this.userService.update(id, user);
+    async update(@Param('id') id: string, @Body() user: User) {
+        return await this.userService.update(id, <User>user);
     }
 
     @Delete(':id')
     @UseGuards(AuthGuard('jwt'))
-    async delete(@Param('id') id) {
-       return await this.userService.delete(id);
+    async delete(@Param('id') id: string) {
+        return await this.userService.delete(id);
     }
 
     @Post('picture')

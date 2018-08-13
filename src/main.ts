@@ -1,13 +1,30 @@
 import {NestFactory} from '@nestjs/core';
-import config from "./config";
+import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
 import {ApplicationModule} from "./app.module";
 
+declare const module: any;
+
 async function bootstrap() {
-    const logger = config.isDevelopmentEnv ? console : false;
-    const app = await NestFactory.create(ApplicationModule, {logger});
+    const app = await NestFactory.create(ApplicationModule);
     app.setGlobalPrefix('api');
     app.enableCors();
-    await app.listen(config.port);
+
+    const options = new DocumentBuilder()
+        .setTitle('Talkeat')
+        .setDescription('Talkeat Backend API')
+        .setVersion('1.0')
+        .setBasePath('/api')
+        .build();
+    const document = SwaggerModule.createDocument(app, options);
+    SwaggerModule.setup('swagger', app, document);
+    const port = app.get('ConfigService')['envConfig']['PORT'];
+    await app.listen(port);
+
+    if (module.hot) {
+        module.hot.accept();
+        module.hot.dispose(() => app.close());
+    }
+
 }
 
 bootstrap();

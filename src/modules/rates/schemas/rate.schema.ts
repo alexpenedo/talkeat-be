@@ -1,5 +1,4 @@
 import {Schema} from "mongoose";
-import {Rate} from "../interfaces/rate.interface";
 
 const RateSchema = new Schema({
     date: {
@@ -30,10 +29,10 @@ const RateSchema = new Schema({
 });
 
 
-RateSchema.pre<Rate>('save', function (next) {
+RateSchema.pre<any>('save', function (next) {
     this.date = new Date();
     next();
-}).pre<Rate>('findOne', function (next) {
+}).pre('findOne', function (next) {
     this.populate('host guest booking');
     next();
 });

@@ -1,14 +1,14 @@
 import {BaseRepository} from "../../../common/repositories/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
-import {Rate} from "../interfaces/rate.interface";
+import {Rate} from "../domain/rate";
 import {ObjectId} from "bson";
 import {Average} from "../interfaces/average.interface";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
 export class RateRepository extends BaseRepository<Rate> {
-    constructor(@InjectModel('Rate') private readonly rateModel: Model<Rate>) {
+    constructor(@InjectModel('Rate') private readonly rateModel) {
         super(rateModel);
     }
 

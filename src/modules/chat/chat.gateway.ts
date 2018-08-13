@@ -3,17 +3,14 @@ import {
     OnGatewayDisconnect,
     SubscribeMessage,
     WebSocketGateway,
-    WebSocketServer,
-    WsResponse
+    WebSocketServer
 } from "@nestjs/websockets";
 import {ChatService} from "./chat.service";
-import {Chat} from "./interfaces/chat.interface";
-import {UseGuards} from "@nestjs/common";
-import {AuthGuard} from "@nestjs/passport";
-import {Booking} from "../bookings/interfaces/booking.interface";
-import {Menu} from "../menus/interfaces/menu.interface";
+import {Chat} from "./domain/chat";
+import {Booking} from "../bookings/domain/booking";
+import {Menu} from "../menus/domain/menu";
 import {JwtService} from "../auth/jwt/jwt.service";
-import {User} from "../users/interfaces/user.interface";
+import {User} from "../users/domain/user";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -29,8 +26,6 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     }
 
     async handleDisconnect(socket) {
-        // const user: User = await this.jwtService.verifyWebsocketToken(socket.handshake.query.token);
-        // socket.leave(user._id);
     }
 
     @SubscribeMessage('firstMessage')
@@ -48,6 +43,13 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     onNotification(client, data) {
         const menu: Menu = data as Menu;
         this.chatService.saveChatMessagesOnUpdateMenu(menu._id, this.server);
+    }
+
+    @SubscribeMessage('changeBookingState')
+    async onChangeBookingState(client, data) {
+        const booking: Booking = data as Booking;
+        const chat = await this.chatService.getBookingChat(booking._id);
+        this.server.to(chat.guest._id).emit('changeBookingState', chat);
     }
 
     @SubscribeMessage('closeChat')

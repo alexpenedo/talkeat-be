@@ -1,13 +1,13 @@
 import {BaseRepository} from "../../../common/repositories/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
-import {Message} from "../interfaces/message.interface";
-import {Chat} from "../interfaces/chat.interface";
+import {Message} from "../domain/message";
+import {Chat} from "../domain/chat";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
 export class ChatRepository extends BaseRepository<Chat> {
-    constructor(@InjectModel('Chat') private readonly chatModel: Model<Chat>) {
+    constructor(@InjectModel('Chat') private readonly chatModel) {
         super(chatModel);
     }
 

@@ -1,5 +1,5 @@
 import {Schema} from "mongoose";
-import {Chat} from "../interfaces/chat.interface";
+import {Chat} from "../domain/chat";
 import {Message} from "./message.schema";
 
 const ChatSchema = new Schema({
@@ -34,10 +34,10 @@ const ChatSchema = new Schema({
     }
 });
 
-ChatSchema.pre<Chat>('findOne', function (next) {
+ChatSchema.pre('findOne', function (next) {
     this.populate('host guest booking');
     next();
-}).pre<Chat>('find', function (next) {
+}).pre('find', function (next) {
     this.populate('host guest booking');
     next();
 });

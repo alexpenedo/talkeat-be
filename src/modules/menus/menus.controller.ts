@@ -9,47 +9,52 @@ import {
     Put,
     Query,
     Req,
-    UseGuards
+    UseGuards, ValidationPipe
 } from '@nestjs/common';
 import {MenuService} from './menu.service';
-import {Menu} from "./interfaces/menu.interface";
-import {FindParams} from "./interfaces/findParams.interface";
+import {Menu} from "./domain/menu";
+import {FindUserMenusRequest} from "./dto/find-user-menus.request";
 import {AuthGuard} from "@nestjs/passport";
 import {BookingService} from "../bookings/booking.service";
 import {Status} from "../../common/enums/status.enum";
-import {User} from "../users/interfaces/user.interface";
+import {ApiUseTags} from "@nestjs/swagger";
+import {FindLocatedMenusRequest} from "./dto/find-located-menus.request";
 
+@ApiUseTags('Menus')
 @Controller('menus')
 export class MenusController {
     constructor(private readonly menuService: MenuService,
                 private readonly bookingSevice: BookingService) {
     }
 
+    @Get('located')
+    async findUserMenusLocated(@Query(new ValidationPipe({transform: true}))
+                                   findLocatedMenusRequest: FindLocatedMenusRequest, @Req() request) {
+        return this.menuService.findUserMenus(findLocatedMenusRequest);
+    }
+
     @Get()
-    async findByParams(@Query() params: FindParams, @Req() request) {
-        if (params.host && params.status) {
-            if (params.status == Status.PENDING) {
-                return this.menuService.findHostMenusPending(params.host);
-            }
-            else if (params.status == Status.FINISHED) {
-                return this.menuService.findHostMenusFinished(params.host);
-            }
-            else throw new BadRequestException('Status must be PENDING or FINISHED');
+    @UseGuards(AuthGuard('jwt'))
+    async findHostMenus(@Query(new ValidationPipe({transform: true}))
+                            findUserMenusRequest: FindUserMenusRequest, @Req() request) {
+        if (findUserMenusRequest.status == Status[Status.PENDING]) {
+            return this.menuService.findHostMenusPending(findUserMenusRequest.host);
         }
-        else {
-            return this.menuService.findUserMenus(params.latitude, params.longitude, params.date, params.type, params.persons, params.userId);
+        else if (findUserMenusRequest.status == Status[Status.FINISHED]) {
+            return this.menuService.findHostMenusFinished(findUserMenusRequest.host);
         }
+        else throw new BadRequestException('Status must be PENDING or FINISHED');
     }
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
-    async create(@Body() menu: Menu) {
+    async create(@Body(new ValidationPipe({transform: true})) menu: Menu) {
         return await this.menuService.create(menu);
     }
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))
-    async update(@Param('id') id, @Body() menu: Menu) {
+    async update(@Param('id') id, @Body(new ValidationPipe({transform: true})) menu: Menu): Promise<Menu> {
         return await this.menuService.update(id, menu);
     }
 

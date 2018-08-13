@@ -1,10 +1,10 @@
-import {forwardRef, Inject, Injectable} from '@nestjs/common';
-import {Model} from 'mongoose';
+import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {MenuRepository} from "./repositories/menu.repository";
-import {Menu} from "./interfaces/menu.interface";
+import {Menu} from "./domain/menu";
 import {BookingService} from "../bookings/booking.service";
-import {Booking} from "../bookings/interfaces/booking.interface";
+import {Booking} from "../bookings/domain/booking";
 import * as _ from 'lodash';
+import {FindLocatedMenusRequest} from "./dto/find-located-menus.request";
 
 @Injectable()
 export class MenuService {
@@ -18,7 +18,10 @@ export class MenuService {
     }
 
     async findById(id: string): Promise<Menu> {
-        return await this.menuRepository.findById(id);
+        const menu: Menu = await this.menuRepository.findById(id);
+        if (!menu)
+            throw new NotFoundException(`Menu with id=${id} has not found`);
+        return menu;
     }
 
     async update(id: string, newValue: Menu): Promise<Menu> {
@@ -29,21 +32,22 @@ export class MenuService {
         return await this.menuRepository.delete(id);
     }
 
-    async findHostMenusFinished(userId: string) {
+    async findHostMenusFinished(userId: string): Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateToOrderByDate(userId, new Date());
     }
 
-    async findHostMenusPending(userId: string) {
+    async findHostMenusPending(userId: string): Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateFromOrderByDate(userId, new Date());
     }
 
-    async findUserMenus(latitude: number, longitude: number, date: string, type: string, persons: number, userId?: string) {
-        const coordinates: number[] = [latitude, longitude];
+    async findUserMenus(findLocatedMenus: FindLocatedMenusRequest): Promise<Menu[]> {
+        const {latitude, longitude, type, date, persons, userId} = findLocatedMenus;
+        const coordinates: number[] = [parseFloat(longitude), parseFloat(latitude)];
         const startDate: Date = this.getStartDate(date, type);
         const endDate: Date = this.getEndDate(date, type);
         let menuIds: string[] = [];
         if (userId) {
-            const bookings: Booking[] = await this.bookingService.findGuestBookingsPending(userId);
+            const bookings: Booking[] = await this.bookingService.findGuestBookingsPendingIncludingCanceled(userId);
             menuIds = _.map(bookings, 'menu');
         }
         return await this.menuRepository.findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(coordinates,
@@ -70,7 +74,7 @@ export class MenuService {
             start.setMinutes(0);
         }
         else {
-            start.setHours(12);
+            start.setHours(0);
             start.setMinutes(0);
         }
         return start;

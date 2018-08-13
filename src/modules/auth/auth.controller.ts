@@ -1,26 +1,34 @@
-import {BadRequestException, Controller, Post, Request} from '@nestjs/common';
+import {BadRequestException, Body, Controller, Post, Request} from '@nestjs/common';
 
 import {AuthService} from './auth.service';
+import {ApiUseTags, ApiResponse, ApiOperation} from "@nestjs/swagger";
+import {LoginRequest} from "./dto/login-request";
+import {LoginResponse} from "./dto/login-response";
 
+@ApiUseTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService
-  ) {}
+    constructor(
+        private readonly authService: AuthService
+    ) {
+    }
 
-  @Post('/login')
-  async login(@Request() req): Promise<any> {
-    const body = req.body;
+    @Post('/login')
+    @ApiOperation({title: 'Login User by email/password'})
+    @ApiResponse({
+        status: 200,
+        description: 'Login successfully',
+        type: LoginResponse
+    })
+    @ApiResponse({status: 401, description: 'Unauthorized'})
+    async login(@Body() loginData: LoginRequest) {
+        if (!loginData.email || !loginData.password) throw new BadRequestException('Missing email or password');
+        return await this.authService.sign(loginData);
+    }
 
-    if (!body) throw new BadRequestException('Body is missing');
-    if (!body.email || !body.password) throw new BadRequestException('Missing email or password');
-
-    return await this.authService.sign(body);
-  }
-
-  @Post('/refresh-token')
-  async refreshToken(@Request() req): Promise<any> {
-    const body = req.body;
-    return await this.authService.refreshToken(body.refreshToken);
-  }
+    @Post('/refresh-token')
+    async refreshToken(@Request() req): Promise<any> {
+        const body = req.body;
+        return await this.authService.refreshToken(body.refreshToken);
+    }
 }

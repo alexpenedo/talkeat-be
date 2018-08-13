@@ -1,12 +1,11 @@
 import {Injectable} from '@nestjs/common';
-import {Model} from 'mongoose';
 import {ChatRepository} from "./repositories/chat.repository";
-import {Booking} from "../bookings/interfaces/booking.interface";
-import {Chat} from "./interfaces/chat.interface";
-import {Message} from "./interfaces/message.interface";
-import {User} from "../users/interfaces/user.interface";
+import {Booking} from "../bookings/domain/booking";
+import {Chat} from "./domain/chat";
+import {Message} from "./domain/message";
 import {BookingService} from "../bookings/booking.service";
 import * as _ from 'lodash';
+import {User} from "../users/domain/user";
 
 @Injectable()
 export class ChatService {

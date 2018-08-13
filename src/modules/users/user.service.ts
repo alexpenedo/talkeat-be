@@ -1,23 +1,26 @@
-import {Injectable} from '@nestjs/common';
-import {Model} from 'mongoose';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import {User} from './interfaces/user.interface';
-import config from "../../config";
 import {UserRepository} from "./repositories/user.repository";
 import * as fs from 'fs';
+import {User} from "./domain/user";
+import {ConfigService} from "../infrastructure/config/config.service";
 
 @Injectable()
 export class UserService {
-    constructor(private userRepository: UserRepository) {
+    constructor(private userRepository: UserRepository,
+                private config: ConfigService) {
     }
 
     async create(user: User): Promise<User> {
-        user.password = bcrypt.hashSync(user.password, config.bcryptSaltRounds);
+        user.password = bcrypt.hashSync(user.password, this.config.bcryptSaltRounds);
         return await this.userRepository.save(user);
     }
 
     async findById(id: string): Promise<User> {
-        return await this.userRepository.findById(id);
+        const user = await this.userRepository.findById(id);
+        if (!user)
+            throw new NotFoundException('User not found');
+        return user;
     }
 
     async findByEmail(email: string): Promise<User> {
@@ -32,9 +35,10 @@ export class UserService {
         return await this.userRepository.delete(id);
     }
 
-    async savePicture(user: User, filename: string) {
-        if (!user.picture) {
-            fs.unlinkSync(user.picture);
+    async savePicture(user: User, filename: string): Promise<User> {
+        if (user.picture) {
+            fs.unlink(user.picture, ()=>{
+            });
         }
         user.picture = filename;
         return await this.update(user._id, user);

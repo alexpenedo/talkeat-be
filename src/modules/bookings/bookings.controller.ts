@@ -1,9 +1,23 @@
-import {BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+    ValidationPipe
+} from '@nestjs/common';
 import {BookingService} from './booking.service';
-import {Booking} from "./interfaces/booking.interface";
+import {Booking} from "./domain/booking";
 import {AuthGuard} from "@nestjs/passport";
 import {Status} from "../../common/enums/status.enum";
+import {ApiUseTags} from "@nestjs/swagger";
 
+@ApiUseTags('Bookings')
 @Controller('bookings')
 export class BookingsController {
     constructor(private readonly bookingService: BookingService) {
@@ -23,8 +37,20 @@ export class BookingsController {
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
-    async create(@Body() booking: Booking) {
+    async create(@Body(new ValidationPipe({transform: true})) booking: Booking) {
         return await this.bookingService.create(booking);
+    }
+
+    @Post(':id/confirm')
+    @UseGuards(AuthGuard('jwt'))
+    async confirmBooking(@Param('id') id) {
+        return await this.bookingService.confirmBooking(id);
+    }
+
+    @Post(':id/cancel')
+    @UseGuards(AuthGuard('jwt'))
+    async cancelBooking(@Param('id') id) {
+        return await this.bookingService.cancelBooking(id);
     }
 
     @Get(':id')
@@ -35,7 +61,7 @@ export class BookingsController {
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))
-    async update(@Param('id') id, @Body() booking: Booking) {
+    async update(@Param('id') id, @Body(new ValidationPipe({transform: true})) booking: Booking) {
         return await this.bookingService.update(id, booking);
     }
 

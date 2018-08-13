@@ -1,5 +1,4 @@
 import {Schema} from "mongoose";
-import {Booking} from "../interfaces/booking.interface";
 
 const BookingSchema: Schema = new Schema({
     date: {
@@ -17,6 +16,13 @@ const BookingSchema: Schema = new Schema({
     menuDate: {
         type: Date,
     },
+    persons: {
+        type: Number,
+        required: true
+    },
+    comment: {
+        type: String
+    },
     menu: {
         type: Schema.Types.ObjectId,
         ref: 'Menu',
@@ -27,19 +33,24 @@ const BookingSchema: Schema = new Schema({
         required: true,
         default: false
     },
+    canceled: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
     rate: {
         type: Schema.Types.ObjectId,
         ref: 'Rate'
     }
 });
 
-BookingSchema.pre<Booking>('save', function (next) {
+BookingSchema.pre<any>('save', function (next) {
     this.date = new Date();
     next();
-}).pre<Booking>('findOne', function (next) {
+}).pre('findOne', function (next) {
     this.populate('host guest menu rate');
     next();
-}).pre<Booking>('find', function (next) {
+}).pre('find', function (next) {
     this.populate('host guest menu rate');
     next();
 });

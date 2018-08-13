@@ -1,11 +1,10 @@
-import {Injectable} from '@nestjs/common';
-import {Model} from 'mongoose';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {RateRepository} from "./repositories/rate.repository";
-import {Rate} from "./interfaces/rate.interface";
+import {Rate} from "./domain/rate";
 import {Average} from "./interfaces/average.interface";
 import * as _ from 'lodash';
 import {BookingService} from "../bookings/booking.service";
-import {Booking} from "../bookings/interfaces/booking.interface";
+import {Booking} from "../bookings/domain/booking";
 
 @Injectable()
 export class RateService {
@@ -21,7 +20,10 @@ export class RateService {
     }
 
     async findById(id: string): Promise<Rate> {
-        return await this.rateRepository.findById(id);
+        const rate:Rate = await this.rateRepository.findById(id);
+        if (!rate)
+            throw new NotFoundException(`Rate with id=${id} has not found`);
+        return rate;
     }
 
     async update(id: string, newValue: Rate): Promise<Rate> {

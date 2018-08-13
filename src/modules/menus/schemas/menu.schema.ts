@@ -1,6 +1,5 @@
 import {Schema} from 'mongoose';
-import {Menu} from "../interfaces/menu.interface";
-import {MenuComponent} from "./menuComponent.schema";
+import {MenuComponent} from "./menu-component.schema";
 
 const MenuSchema = new Schema({
     name: {
@@ -57,13 +56,13 @@ const MenuSchema = new Schema({
     }
 });
 
-MenuSchema.pre<Menu>('save', function (next) {
+MenuSchema.pre<any>('save', function (next) {
     this.available = this.guests;
     next();
-}).pre<Menu>('findOne', function (next) {
+}).pre('findOne', function (next) {
     this.populate('host');
     next();
-}).pre<Menu>('find', function (next) {
+}).pre('find', function (next) {
     this.populate('host');
     next();
 });

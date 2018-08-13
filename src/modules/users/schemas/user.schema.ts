@@ -1,6 +1,6 @@
 import {Schema} from 'mongoose';
 
-export const UserSchema= new Schema({
+export const UserSchema = new Schema({
     name: {
         type: String,
         required: true
@@ -16,8 +16,7 @@ export const UserSchema= new Schema({
     },
     mobileNumber: {
         type: String,
-        required: true,
-        match: [/^[1-9][0-9]{8}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
+        required: true
     },
     password: {
         type: String,

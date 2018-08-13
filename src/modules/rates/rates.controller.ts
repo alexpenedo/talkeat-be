@@ -1,8 +1,22 @@
-import {Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards} from '@nestjs/common';
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    Query,
+    UseGuards,
+    ValidationPipe
+} from '@nestjs/common';
 import {RateService} from './rate.service';
-import {Rate} from "./interfaces/rate.interface";
+import {Rate} from "./domain/rate";
 import {AuthGuard} from "@nestjs/passport";
+import {ApiUseTags} from "@nestjs/swagger";
 
+@ApiUseTags('Rates')
 @Controller('rates')
 export class RatesController {
     constructor(private readonly rateService: RateService) {
@@ -10,17 +24,19 @@ export class RatesController {
 
     @Get()
     async getHostRates(@Query('hostId') hostId) {
+        if (!hostId) throw new BadRequestException('Param hostId is required');
         return await this.rateService.getHostRates(hostId);
     }
 
     @Get('average')
     async getHostAverage(@Query('hostId') hostId) {
+        if (!hostId) throw new BadRequestException('Param hostId is required');
         return await this.rateService.getHostAverageRating(hostId);
     }
 
     @Post()
     @UseGuards(AuthGuard('jwt'))
-    async create(@Body() rate: Rate) {
+    async create(@Body(new ValidationPipe({transform: true})) rate: Rate) {
         return await this.rateService.create(rate);
     }
 
@@ -33,7 +49,7 @@ export class RatesController {
 
     @Put(':id')
     @UseGuards(AuthGuard('jwt'))
-    async update(@Param('id') id, @Body() rate: Rate) {
+    async update(@Param('id') id, @Body(new ValidationPipe({transform: true})) rate: Rate) {
         return await this.rateService.update(id, rate);
     }
 

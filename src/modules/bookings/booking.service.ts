@@ -1,9 +1,8 @@
-import {BadRequestException, forwardRef, Inject, Injectable} from '@nestjs/common';
-import {Model} from 'mongoose';
+import {BadRequestException, forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {BookingRepository} from "./repositories/booking.repository";
-import {Booking} from "./interfaces/booking.interface";
+import {Booking} from "./domain/booking";
 import {MenuService} from "../menus/menu.service";
-import {Menu} from "../menus/interfaces/menu.interface";
+import {Menu} from "../menus/domain/menu";
 
 @Injectable()
 export class BookingService {
@@ -17,18 +16,30 @@ export class BookingService {
         if (menu.available < 1) {
             throw new BadRequestException('Menu has not availability');
         }
-        menu.available--;
+        menu.available -= booking.persons;
         await this.menuService.update(menu._id, menu);
         return await this.bookingRepository.save(booking);
     }
 
     async findById(id: string): Promise<Booking> {
-        return await this.bookingRepository.findById(id);
+        const booking: Booking = await this.bookingRepository.findById(id);
+        if (!booking)
+            throw new NotFoundException(`Booking with id=${id} has not found`);
+        return booking;
     }
 
     async confirmBooking(id: string): Promise<Booking> {
         const booking: Booking = await this.findById(id);
         booking.confirmed = true;
+        return await this.update(id, booking);
+    }
+
+    async cancelBooking(id: string): Promise<Booking> {
+        const booking: Booking = await this.findById(id);
+        const menu: Menu = await this.menuService.findById(booking.menu._id);
+        menu.available += booking.persons;
+        await this.menuService.update(menu._id, menu);
+        booking.canceled = true;
         return await this.update(id, booking);
     }
 
@@ -50,6 +61,10 @@ export class BookingService {
 
     async findGuestBookingsPending(guestId: string): Promise<Booking[]> {
         return await this.bookingRepository.findByGuestIdAndDateFromOrderByDateAsc(guestId, new Date());
+    }
+
+    async findGuestBookingsPendingIncludingCanceled(guestId: string): Promise<Booking[]> {
+        return await this.bookingRepository.findByGuestIdAndDateFromOrderAndNotCanceledByDateAsc(guestId, new Date());
     }
 
 }

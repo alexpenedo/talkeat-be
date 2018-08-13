@@ -1,12 +1,11 @@
 import {BaseRepository} from "../../../common/repositories/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
-import {Menu} from "../interfaces/menu.interface";
+import {Menu} from "../domain/menu";
 import {Injectable} from "@nestjs/common";
 
 @Injectable()
 export class MenuRepository extends BaseRepository<Menu> {
-    constructor(@InjectModel('Menu') private readonly menuModel: Model<Menu>) {
+    constructor(@InjectModel('Menu') private readonly menuModel) {
         super(menuModel);
     }
 
@@ -37,7 +36,10 @@ export class MenuRepository extends BaseRepository<Menu> {
     }
 
     private buildFindQuery(coordinates: number[], persons: number, startDate: Date, endDate: Date): any {
-        const maxDistance = 10000;
+        // let coords = [];
+        // coords[0] = longitude;
+        // coords[1] = req.query.latitude;
+        const maxDistance = 10 / 111.12;
         return {
             location: {
                 $near: coordinates,
