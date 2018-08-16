@@ -23,9 +23,14 @@ export class RatesController {
     }
 
     @Get()
-    async getHostRates(@Query('hostId') hostId) {
-        if (!hostId) throw new BadRequestException('Param hostId is required');
-        return await this.rateService.getHostRates(hostId);
+    async getRates(@Query('hostId') hostId, @Query('guestId') guestId) {
+        if (hostId) {
+            return await this.rateService.getHostRates(hostId);
+        } else if (guestId) {
+            return await this.rateService.getGuestRates(guestId);
+        } else {
+            throw new BadRequestException('Param hostId or guestId is required');
+        }
     }
 
     @Get('average')

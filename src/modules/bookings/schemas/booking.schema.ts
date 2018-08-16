@@ -37,10 +37,6 @@ const BookingSchema: Schema = new Schema({
         type: Boolean,
         required: true,
         default: false
-    },
-    rate: {
-        type: Schema.Types.ObjectId,
-        ref: 'Rate'
     }
 });
 

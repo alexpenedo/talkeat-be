@@ -16,11 +16,13 @@ import {Booking} from "./domain/booking";
 import {AuthGuard} from "@nestjs/passport";
 import {Status} from "../../common/enums/status.enum";
 import {ApiUseTags} from "@nestjs/swagger";
+import {RateService} from "../rates/rate.service";
 
 @ApiUseTags('Bookings')
 @Controller('bookings')
 export class BookingsController {
-    constructor(private readonly bookingService: BookingService) {
+    constructor(private readonly bookingService: BookingService,
+                private readonly rateService: RateService) {
     }
 
     @Get()
@@ -51,6 +53,12 @@ export class BookingsController {
     @UseGuards(AuthGuard('jwt'))
     async cancelBooking(@Param('id') id) {
         return await this.bookingService.cancelBooking(id);
+    }
+
+    @Get(':id/rates')
+    @UseGuards(AuthGuard('jwt'))
+    async getBookingRates(@Param('id') id) {
+        return await this.rateService.getBookingRates(id);
     }
 
     @Get(':id')

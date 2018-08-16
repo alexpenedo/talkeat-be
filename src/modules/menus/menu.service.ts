@@ -5,6 +5,8 @@ import {BookingService} from "../bookings/booking.service";
 import {Booking} from "../bookings/domain/booking";
 import * as _ from 'lodash';
 import {FindLocatedMenusRequest} from "./dto/find-located-menus.request";
+import {FindUserMenusRequest} from "./dto/find-user-menus.request";
+import {Status} from "../../common/enums/status.enum";
 
 @Injectable()
 export class MenuService {
@@ -32,16 +34,19 @@ export class MenuService {
         return await this.menuRepository.delete(id);
     }
 
-    async findHostMenusFinished(userId: string): Promise<Menu[]> {
-        return await this.menuRepository.findByHostIdAndDateToOrderByDate(userId, new Date());
-    }
-
-    async findHostMenusPending(userId: string): Promise<Menu[]> {
-        return await this.menuRepository.findByHostIdAndDateFromOrderByDate(userId, new Date());
+    async findHostMenus(findUserMenusRequest: FindUserMenusRequest): Promise<Menu[]> {
+        if (findUserMenusRequest.status == Status.PENDING) {
+            return await this.menuRepository.findByHostIdAndDateFromOrderByDate(findUserMenusRequest.host, new Date(),
+                +findUserMenusRequest.page, +findUserMenusRequest.size);
+        }
+        else if (findUserMenusRequest.status == Status.FINISHED) {
+            return await this.menuRepository.findByHostIdAndDateToOrderByDate(findUserMenusRequest.host, new Date(),
+                +findUserMenusRequest.page, +findUserMenusRequest.size);
+        }
     }
 
     async findUserMenus(findLocatedMenus: FindLocatedMenusRequest): Promise<Menu[]> {
-        const {latitude, longitude, type, date, persons, userId} = findLocatedMenus;
+        const {latitude, longitude, type, date, persons, userId, sort, page, size} = findLocatedMenus;
         const coordinates: number[] = [parseFloat(longitude), parseFloat(latitude)];
         const startDate: Date = this.getStartDate(date, type);
         const endDate: Date = this.getEndDate(date, type);
@@ -51,7 +56,7 @@ export class MenuService {
             menuIds = _.map(bookings, 'menu');
         }
         return await this.menuRepository.findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(coordinates,
-            startDate, endDate, persons, menuIds, userId);
+            startDate, endDate, persons, menuIds, userId, sort, +page, +size);
     }
 
     private getEndDate(date: string, type: string): Date {

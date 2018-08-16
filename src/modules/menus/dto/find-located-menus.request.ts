@@ -1,4 +1,5 @@
 import {IsDateString, IsNumberString, IsOptional, IsString} from "class-validator";
+import {Sort} from "../../../common/enums/sort.enum";
 
 export class FindLocatedMenusRequest {
     @IsNumberString()
@@ -14,4 +15,12 @@ export class FindLocatedMenusRequest {
     @IsString()
     @IsOptional()
     userId?: string;
+    @IsString()
+    sort: Sort;
+    @IsNumberString()
+    @IsOptional()
+    page: string;
+    @IsNumberString()
+    @IsOptional()
+    size: string;
 }

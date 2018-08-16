@@ -56,7 +56,9 @@ describe('Menus Controller Test', () => {
                 persons: menu.available,
                 date: menu.date.toISOString(),
                 type,
-                userId: user._id
+                userId: user._id,
+                page: 0,
+                size: 1
             })
             .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(200);
@@ -105,12 +107,58 @@ describe('Menus Controller Test', () => {
                 persons: menu.available,
                 date: menu.date.toISOString(),
                 type,
-                userId: user._id
+                userId: user._id,
+                page: 0,
+                size: 2
             })
             .set('Authorization', `Bearer ${token}`);
         expect(response.status).toBe(200);
         const menus = response.body as Menu[];
         expect(menus.length).toBe(2);
+    });
+
+    it(`/GET userMenus: should return nearest menus paginated`, async () => {
+        const host: User = await TestUtil.userBuilder().withValidData().store();
+        const user: User = await TestUtil.userBuilder().withValidData().store();
+        await TestUtil.menuBuilder().withValidData(host).store();
+        const menu: Menu = await TestUtil.menuBuilder().withValidData(host).store();
+        const menu2: Menu = await TestUtil.menuBuilder().withValidData(host)
+            .withDate(menu.date).withGuests(menu.guests)
+            .withLocation([menu.location[0], menu.location[1]]).store();
+        const token = await TestUtil.getToken(user);
+        const type = menu.date.getHours() >= 18 ? 'dinner' : 'lunch';
+        const response1: Response = await request(server)
+            .get('/menus/located')
+            .query({
+                longitude: menu.location[0],
+                latitude: menu.location[1],
+                persons: menu.available,
+                date: menu.date.toISOString(),
+                type,
+                userId: user._id,
+                page: 0,
+                size: 1
+            })
+            .set('Authorization', `Bearer ${token}`);
+        expect(response1.status).toBe(200);
+        const menus1 = response1.body as Menu[];
+        expect(menus1.length).toBe(1);
+        const response2: Response = await request(server)
+            .get('/menus/located')
+            .query({
+                longitude: menu.location[0],
+                latitude: menu.location[1],
+                persons: menu.available,
+                date: menu.date.toISOString(),
+                type,
+                userId: user._id,
+                page: 1,
+                size: 1
+            })
+            .set('Authorization', `Bearer ${token}`);
+        expect(response2.status).toBe(200);
+        const menus2 = response2.body as Menu[];
+        expect(menus2.length).toBe(1);
     });
 
     it(`/GET userMenus: should filter by persons`, async () => {

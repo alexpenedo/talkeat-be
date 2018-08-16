@@ -18,4 +18,6 @@ export class Rate extends Entity {
     comment?: string;
     @IsInt()
     rate: number;
+    @IsString()
+    type: string;
 }

@@ -1,5 +1,4 @@
 import {Menu} from "../../menus/domain/menu";
-import {Rate} from "../../rates/domain/rate";
 import {User} from "../../users/domain/user";
 import {IsBoolean, IsDateString, IsInt, IsOptional, IsString, ValidateNested} from "class-validator";
 import {Entity} from "../../../common/domain/entity";
@@ -27,7 +26,4 @@ export class Booking extends Entity {
     @IsBoolean()
     @IsOptional()
     canceled?: boolean;
-    @ValidateNested()
-    @IsOptional()
-    rate?: Rate;
 }

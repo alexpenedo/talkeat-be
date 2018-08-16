@@ -3,24 +3,18 @@ import {RateRepository} from "./repositories/rate.repository";
 import {Rate} from "./domain/rate";
 import {Average} from "./interfaces/average.interface";
 import * as _ from 'lodash';
-import {BookingService} from "../bookings/booking.service";
-import {Booking} from "../bookings/domain/booking";
 
 @Injectable()
 export class RateService {
-    constructor(private readonly rateRepository: RateRepository, private readonly bookingService: BookingService) {
+    constructor(private readonly rateRepository: RateRepository) {
     }
 
     async create(rate: Rate): Promise<Rate> {
-        rate = await this.rateRepository.save(rate);
-        const booking: Booking = await this.bookingService.findById(rate.booking._id);
-        booking.rate = rate;
-        await this.bookingService.update(booking._id, booking);
-        return rate;
+        return await this.rateRepository.save(rate);
     }
 
     async findById(id: string): Promise<Rate> {
-        const rate:Rate = await this.rateRepository.findById(id);
+        const rate: Rate = await this.rateRepository.findById(id);
         if (!rate)
             throw new NotFoundException(`Rate with id=${id} has not found`);
         return rate;
@@ -40,6 +34,14 @@ export class RateService {
     }
 
     async getHostRates(hostId: string): Promise<Rate[]> {
-        return await this.rateRepository.findByHostId(hostId);
+        return await this.rateRepository.findByHostIdAndTypeHost(hostId);
+    }
+
+    async getGuestRates(hostId: string): Promise<Rate[]> {
+        return await this.rateRepository.findByGuestIdAndTypeGuest(hostId);
+    }
+
+    async getBookingRates(bookingId: string): Promise<Rate[]> {
+        return await this.rateRepository.findByBookingId(bookingId);
     }
 }

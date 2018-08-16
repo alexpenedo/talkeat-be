@@ -25,7 +25,10 @@ const RateSchema = new Schema({
     rate: {
         type: Number,
         required: true
-    }
+    }, type: {
+        type: String,
+        required: true
+    },
 });
 
 

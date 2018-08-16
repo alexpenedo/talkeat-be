@@ -52,7 +52,7 @@ const MenuSchema = new Schema({
     },
     location: {
         type: [Number],
-        index: '2d'
+        index: '2dsphere'
     }
 });
 

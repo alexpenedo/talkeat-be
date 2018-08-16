@@ -36,14 +36,8 @@ export class MenusController {
     @Get()
     @UseGuards(AuthGuard('jwt'))
     async findHostMenus(@Query(new ValidationPipe({transform: true}))
-                            findUserMenusRequest: FindUserMenusRequest, @Req() request) {
-        if (findUserMenusRequest.status == Status[Status.PENDING]) {
-            return this.menuService.findHostMenusPending(findUserMenusRequest.host);
-        }
-        else if (findUserMenusRequest.status == Status[Status.FINISHED]) {
-            return this.menuService.findHostMenusFinished(findUserMenusRequest.host);
-        }
-        else throw new BadRequestException('Status must be PENDING or FINISHED');
+                            findUserMenusRequest: FindUserMenusRequest) {
+        return await this.menuService.findHostMenus(findUserMenusRequest);
     }
 
     @Post()

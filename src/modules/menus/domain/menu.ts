@@ -42,4 +42,6 @@ export class Menu extends Entity {
     country: string;
     @IsArray()
     location: number[];
+    average:number;
+    distance:number;
 }
