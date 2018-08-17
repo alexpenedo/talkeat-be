@@ -10,7 +10,7 @@ import {ConfigModule} from "./modules/infrastructure/config/config.module";
 import {ConfigService} from "./modules/infrastructure/config/config.service";
 import {DatabaseModule} from "./modules/infrastructure/database/database.module";
 
-const config = new ConfigService(`${process.env.NODE_ENV}.env`);
+const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
 
 @Module({
     imports: [

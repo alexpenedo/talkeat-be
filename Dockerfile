@@ -2,6 +2,7 @@ FROM node:10 as dist
 WORKDIR /tmp/
 COPY package.json package-lock.json tsconfig.json ./
 COPY src/ src/
+COPY env/ env/
 RUN npm install
 RUN npm run build
 
@@ -11,7 +12,8 @@ COPY package.json package-lock.json ./
 RUN npm install --production
 
 FROM node:10
-WORKDIR /usr/local/nub-api
+WORKDIR /usr/local/talkeat
 COPY --from=node_modules /tmp/node_modules ./node_modules
 COPY --from=dist /tmp/dist ./dist
+COPY --from=dist /tmp/env ./env
 CMD ["node", "dist/main.js"]
