@@ -37,7 +37,15 @@ export class MenusController {
     @UseGuards(AuthGuard('jwt'))
     async findHostMenus(@Query(new ValidationPipe({transform: true}))
                             findUserMenusRequest: FindUserMenusRequest) {
-        return await this.menuService.findHostMenus(findUserMenusRequest);
+        if (findUserMenusRequest.status == Status.PENDING) {
+            return await this.menuService.findHostMenusPending(findUserMenusRequest.host,
+                +findUserMenusRequest.page, +findUserMenusRequest.size);
+        }
+        else if (findUserMenusRequest.status == Status.FINISHED) {
+            return await this.menuService.findHostMenusFinished(findUserMenusRequest.host,
+                +findUserMenusRequest.page, +findUserMenusRequest.size);
+        }
+        else throw new BadRequestException('Status must be PENDING or FINISHED');
     }
 
     @Post()
@@ -58,10 +66,10 @@ export class MenusController {
         return await this.menuService.findById(id);
     }
 
-    @Delete(':id')
+    @Post(':id/cancel')
     @UseGuards(AuthGuard('jwt'))
     public async delete(@Param('id') id) {
-        return await this.menuService.delete(id);
+        return await this.menuService.cancelMenu(id);
     }
 
     @Get(':id/bookings')

@@ -1,6 +1,6 @@
 import {MenuComponent} from "./menu-component";
 import {
-    IsArray,
+    IsArray, IsBoolean,
     IsDateString,
     IsDefined,
     IsInt,
@@ -42,6 +42,9 @@ export class Menu extends Entity {
     country: string;
     @IsArray()
     location: number[];
-    average:number;
-    distance:number;
+    @IsBoolean()
+    @IsOptional()
+    canceled?: boolean;
+    average: number;
+    distance: number;
 }

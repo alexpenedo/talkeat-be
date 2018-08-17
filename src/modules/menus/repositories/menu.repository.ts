@@ -32,7 +32,7 @@ export class MenuRepository extends BaseRepository<Menu> {
 
     async findByHostIdAndDateFromOrderByDate(userId: string, dateFrom: Date, page: number, size: number): Promise<Menu[]> {
         return await this.menuModel.find({
-            host: userId, date: {
+            host: userId, canceled: false, date: {
                 $gte: dateFrom
             }
         }).sort({date: -1}).skip(page * size).limit(size).exec();
@@ -40,7 +40,7 @@ export class MenuRepository extends BaseRepository<Menu> {
 
     async findByHostIdAndDateToOrderByDate(userId: string, dateTo: Date, page: number, size: number): Promise<Menu[]> {
         return await this.menuModel.find({
-            host: userId, date: {
+            host: userId, canceled: false, date: {
                 $lte: dateTo
             }
         }).sort({date: -1}).skip(page * size).limit(size).exec();
@@ -54,7 +54,8 @@ export class MenuRepository extends BaseRepository<Menu> {
             date: {
                 $gte: startDate,
                 $lte: endDate
-            }
+            },
+            canceled: false
         };
         if (userId) query.host = {$ne: new ObjectId(userId)};
         if (menuIds) query._id = {$nin: menuIds};

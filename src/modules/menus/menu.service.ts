@@ -1,4 +1,4 @@
-import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {BadRequestException, forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {MenuRepository} from "./repositories/menu.repository";
 import {Menu} from "./domain/menu";
 import {BookingService} from "../bookings/booking.service";
@@ -30,19 +30,20 @@ export class MenuService {
         return await this.menuRepository.update(id, newValue);
     }
 
-    async delete(id: string): Promise<Menu> {
-        return await this.menuRepository.delete(id);
+    async cancelMenu(id: string): Promise<Menu> {
+        const menu: Menu = await this.findById(id);
+        await this.bookingService.cancelBookingsByMenu(menu._id);
+        menu.canceled = true;
+        return await this.update(id, menu);
     }
 
-    async findHostMenus(findUserMenusRequest: FindUserMenusRequest): Promise<Menu[]> {
-        if (findUserMenusRequest.status == Status.PENDING) {
-            return await this.menuRepository.findByHostIdAndDateFromOrderByDate(findUserMenusRequest.host, new Date(),
-                +findUserMenusRequest.page, +findUserMenusRequest.size);
-        }
-        else if (findUserMenusRequest.status == Status.FINISHED) {
-            return await this.menuRepository.findByHostIdAndDateToOrderByDate(findUserMenusRequest.host, new Date(),
-                +findUserMenusRequest.page, +findUserMenusRequest.size);
-        }
+
+    async findHostMenusPending(host: string, page: number, size: number) {
+        return await this.menuRepository.findByHostIdAndDateFromOrderByDate(host, new Date(), page, size);
+    }
+
+    async findHostMenusFinished(host: string, page: number, size: number) {
+        return await this.menuRepository.findByHostIdAndDateToOrderByDate(host, new Date(), page, size);
     }
 
     async findUserMenus(findLocatedMenus: FindLocatedMenusRequest): Promise<Menu[]> {

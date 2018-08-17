@@ -53,6 +53,11 @@ const MenuSchema = new Schema({
     location: {
         type: [Number],
         index: '2dsphere'
+    },
+    canceled: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 

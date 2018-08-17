@@ -28,17 +28,21 @@ export class BookingRepository extends BaseRepository<Booking> {
         }).populate("menus host guest rate").sort({date: -1}).exec();
     }
 
-    async findByGuestIdAndDateFromOrderByDateAsc(guestId: string, dateFrom: Date): Promise<Booking[]> {
+    async cancelBookingsByMenuId(menuId: string) {
+        await this.bookingModel.update({menu: menuId}, {$set: {canceled: true}}, {multi: true}).exec();
+    }
+
+    async findByGuestIdAndDateFromOrderByDateAsc(guestId: string, dateFrom: Date, page: number, size: number): Promise<Booking[]> {
         return await this.bookingModel.find({
             guest: guestId,
             canceled: false,
             menuDate: {
                 $gte: dateFrom
             }
-        }).sort({date: -1}).exec();
+        }).sort({date: -1}).skip(page * size).limit(size).exec();
     }
 
-    async findByGuestIdAndDateFromOrderAndNotCanceledByDateAsc(guestId: string, dateFrom: Date): Promise<Booking[]> {
+    async findByGuestIdAndDateFromOrderAndNotCanceledByDateAsc(guestId: string, dateFrom: Date,): Promise<Booking[]> {
         return await this.bookingModel.find({
             guest: guestId,
             menuDate: {
@@ -47,14 +51,14 @@ export class BookingRepository extends BaseRepository<Booking> {
         }).sort({date: -1}).exec();
     }
 
-    async findByGuestIdAndDateToOrderByDate(guestId: string, dateTo: Date): Promise<Booking[]> {
+    async findByGuestIdAndDateToOrderByDate(guestId: string, dateTo: Date, page: number, size: number): Promise<Booking[]> {
         return await this.bookingModel.find({
             guest: guestId,
             confirmed: true,
             menuDate: {
                 $lte: dateTo
             }
-        }).sort({date: -1}).exec();
+        }).sort({date: -1}).skip(page * size).limit(size).exec();
     }
 
 }

@@ -11,6 +11,7 @@ import {Booking} from "../bookings/domain/booking";
 import {Menu} from "../menus/domain/menu";
 import {JwtService} from "../auth/jwt/jwt.service";
 import {User} from "../users/domain/user";
+import {Notification} from "../../common/enums/notification.enum";
 
 @WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -41,8 +42,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     @SubscribeMessage('notification')
     onNotification(client, data) {
-        const menu: Menu = data as Menu;
-        this.chatService.saveChatMessagesOnUpdateMenu(menu._id, this.server);
+        const menu: Menu = data.menu as Menu;
+        const notification: Notification = data.notification as Notification;
+        let content: string;
+        if (notification == Notification.UPDATE) {
+            content = 'Menu updated by host. Please, check the changes';
+        }
+        else if (notification == Notification.CANCEL) {
+            content = 'Menu canceled by host. Sorry.';
+        }
+        this.chatService.saveChatMessagesOnNotificationMenu(menu._id, content, this.server);
+
     }
 
     @SubscribeMessage('changeBookingState')

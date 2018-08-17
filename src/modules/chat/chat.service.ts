@@ -57,11 +57,10 @@ export class ChatService {
         return chat;
     }
 
-    async saveChatMessagesOnUpdateMenu(menuId: string, socket?: any) {
+    async saveChatMessagesOnNotificationMenu(menuId: string, content: string, socket?: any) {
         const bookings: Booking[] = await this.bookingService.findByMenuId(menuId);
         const bookingIds: string[] = _.map(bookings, '_id');
         const chats: Chat[] = await this.chatRepository.findByBookingIdIn(bookingIds);
-        const content = 'Menu updated by host. Please, check the changes';
         _.each(chats, (chat: Chat) => {
             this.pushMessageOnChat(chat._id, content, socket);
         })

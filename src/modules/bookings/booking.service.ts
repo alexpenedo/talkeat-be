@@ -34,6 +34,11 @@ export class BookingService {
         return await this.update(id, booking);
     }
 
+    async cancelBookingsByMenu(menuId: string) {
+        const menu: Menu = await this.menuService.findById(menuId);
+        await this.bookingRepository.cancelBookingsByMenuId(menu._id);
+    }
+
     async cancelBooking(id: string): Promise<Booking> {
         const booking: Booking = await this.findById(id);
         const menu: Menu = await this.menuService.findById(booking.menu._id);
@@ -55,12 +60,12 @@ export class BookingService {
         return await this.bookingRepository.findByMenuId(menuId);
     }
 
-    async findGuestBookingsFinished(guestId: string): Promise<Booking[]> {
-        return await this.bookingRepository.findByGuestIdAndDateToOrderByDate(guestId, new Date());
+    async findGuestBookingsFinished(guestId: string, page: number, size: number): Promise<Booking[]> {
+        return await this.bookingRepository.findByGuestIdAndDateToOrderByDate(guestId, new Date(), page, size);
     }
 
-    async findGuestBookingsPending(guestId: string): Promise<Booking[]> {
-        return await this.bookingRepository.findByGuestIdAndDateFromOrderByDateAsc(guestId, new Date());
+    async findGuestBookingsPending(guestId: string, page: number, size: number): Promise<Booking[]> {
+        return await this.bookingRepository.findByGuestIdAndDateFromOrderByDateAsc(guestId, new Date(), page, size);
     }
 
     async findGuestBookingsPendingIncludingCanceled(guestId: string): Promise<Booking[]> {

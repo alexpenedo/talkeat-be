@@ -17,6 +17,8 @@ import {AuthGuard} from "@nestjs/passport";
 import {Status} from "../../common/enums/status.enum";
 import {ApiUseTags} from "@nestjs/swagger";
 import {RateService} from "../rates/rate.service";
+import {FindUserMenusRequest} from "../menus/dto/find-user-menus.request";
+import {FindUserBookingsRequest} from "./dto/find-user-bookings.request";
 
 @ApiUseTags('Bookings')
 @Controller('bookings')
@@ -27,12 +29,15 @@ export class BookingsController {
 
     @Get()
     @UseGuards(AuthGuard('jwt'))
-    async findByStatus(@Query('guestId') guestId: string, @Query('status') status: Status) {
-        if (status == Status.PENDING) {
-            return await this.bookingService.findGuestBookingsPending(guestId);
+    async findByStatus(@Query(new ValidationPipe({transform: true}))
+                           findUserBookingsRequest: FindUserBookingsRequest) {
+        if (findUserBookingsRequest.status == Status.PENDING) {
+            return await this.bookingService.findGuestBookingsPending(findUserBookingsRequest.guest,
+                +findUserBookingsRequest.page, +findUserBookingsRequest.size);
         }
-        else if (status == Status.FINISHED) {
-            return await this.bookingService.findGuestBookingsFinished(guestId);
+        else if (findUserBookingsRequest.status == Status.FINISHED) {
+            return await this.bookingService.findGuestBookingsFinished(findUserBookingsRequest.guest,
+                +findUserBookingsRequest.page, +findUserBookingsRequest.size);
         }
         else throw new BadRequestException('Status must be PENDING or FINISHED');
     }
