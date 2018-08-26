@@ -14,7 +14,7 @@ import {
 import {RateService} from './rate.service';
 import {Rate} from "./domain/rate";
 import {AuthGuard} from "@nestjs/passport";
-import {ApiUseTags} from "@nestjs/swagger";
+import {ApiUseTags, ApiOperation} from "@nestjs/swagger";
 
 @ApiUseTags('Rates')
 @Controller('rates')
@@ -23,6 +23,7 @@ export class RatesController {
     }
 
     @Get()
+    @ApiOperation({title: 'Get rates by host or guest'})
     async getRates(@Query('hostId') hostId, @Query('guestId') guestId) {
         if (hostId) {
             return await this.rateService.getHostRates(hostId);
@@ -34,18 +35,21 @@ export class RatesController {
     }
 
     @Get('average')
+    @ApiOperation({title: 'Get host average rating'})
     async getHostAverage(@Query('hostId') hostId) {
         if (!hostId) throw new BadRequestException('Param hostId is required');
         return await this.rateService.getHostAverageRating(hostId);
     }
 
     @Post()
+    @ApiOperation({title: 'Create rate'})
     @UseGuards(AuthGuard('jwt'))
     async create(@Body(new ValidationPipe({transform: true})) rate: Rate) {
         return await this.rateService.create(rate);
     }
 
     @Get(':id')
+    @ApiOperation({title: 'Get rate by id'})
     @UseGuards(AuthGuard('jwt'))
     async get(@Param('id') id) {
         return await this.rateService.findById(id);
@@ -53,12 +57,14 @@ export class RatesController {
 
 
     @Put(':id')
+    @ApiOperation({title: 'Update rate by id'})
     @UseGuards(AuthGuard('jwt'))
     async update(@Param('id') id, @Body(new ValidationPipe({transform: true})) rate: Rate) {
         return await this.rateService.update(id, rate);
     }
 
     @Delete(':id')
+    @ApiOperation({title: 'Delete rate by id'})
     @UseGuards(AuthGuard('jwt'))
     public async delete(@Param('id') id) {
         return await this.rateService.delete(id);

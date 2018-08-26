@@ -27,6 +27,7 @@ export class AuthController {
     }
 
     @Post('/refresh-token')
+    @ApiOperation({title: 'Refresh Authentication Token'})
     async refreshToken(@Request() req): Promise<any> {
         const body = req.body;
         return await this.authService.refreshToken(body.refreshToken);
