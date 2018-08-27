@@ -1,5 +1,4 @@
 import {Schema} from "mongoose";
-import {Chat} from "../domain/chat";
 import {Message} from "./message.schema";
 
 const ChatSchema = new Schema({

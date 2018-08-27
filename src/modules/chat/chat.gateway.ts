@@ -59,7 +59,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     async onChangeBookingState(client, data) {
         const booking: Booking = data as Booking;
         const chat = await this.chatService.getBookingChat(booking._id);
-        this.server.to(chat.guest._id).emit('changeBookingState', chat);
+        this.server.to(chat.booking.guest._id).emit('changeBookingState', chat);
     }
 
     @SubscribeMessage('closeChat')

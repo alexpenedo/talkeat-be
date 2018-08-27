@@ -1,22 +1,25 @@
 import {BaseRepository} from "../../../common/repositories/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
-import {Model} from "mongoose";
 import {Message} from "../domain/message";
 import {Chat} from "../domain/chat";
 import {Injectable} from "@nestjs/common";
+import {ChatAssembler} from "../assemblers/chat-assembler";
 
 @Injectable()
 export class ChatRepository extends BaseRepository<Chat> {
-    constructor(@InjectModel('Chat') private readonly chatModel) {
-        super(chatModel);
+    constructor(@InjectModel('Chat') private readonly chatModel,
+                private readonly chatAssembler: ChatAssembler) {
+        super(chatModel, chatAssembler);
     }
 
     async findByBookingId(bookingId: string): Promise<Chat> {
-        return await this.chatModel.findOne({booking: bookingId}).exec();
+        const document = await this.chatModel.findOne({booking: bookingId}).exec();
+        return this.chatAssembler.toEntity(document);
     }
 
     async findByBookingIdIn(bookingIds: string[]): Promise<Chat[]> {
-        return await this.chatModel.find({booking: {$in: bookingIds}}).exec();
+        const documents = await this.chatModel.find({booking: {$in: bookingIds}}).exec();
+        return this.chatAssembler.toEntities(documents);
     }
 
     async pushChatMessage(id: string, message: Message): Promise<Chat> {
@@ -28,7 +31,7 @@ export class ChatRepository extends BaseRepository<Chat> {
         const query = {
             $and: [{menuDate: {$gte: dateFrom}}, {$or: [{host: hostId}, {guest: guestId}]}]
         };
-        return await this.chatModel.find(query).populate('guest host')
+        const documents = await this.chatModel.find(query).populate('guest host')
             .populate({
                 path: 'booking',
                 model: 'Booking',
@@ -37,18 +40,19 @@ export class ChatRepository extends BaseRepository<Chat> {
                     model: 'Menu'
                 }
             }).exec();
+        return this.chatAssembler.toEntities(documents);
     }
 
-    async updateHostConnectionDateByChatId(chatId: string, hostId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
+    async updateHostConnectionDateByChatId(chatId: string, hostId: string, dateFrom: Date, connectionDate: Date) {
         const query = this.buildQueryChatIdsInAndDateFrom(chatId, dateFrom);
         query.$and.push({host: hostId});
-        return await this.chatModel.update(query, {hostLastConnection: connectionDate}, {multi: true}).exec();
+        await this.chatModel.update(query, {hostLastConnection: connectionDate}, {multi: true}).exec();
     }
 
-    async updateGuestConnectionDateByChatId(chatId: string, guestId: string, dateFrom: Date, connectionDate: Date): Promise<Chat> {
+    async updateGuestConnectionDateByChatId(chatId: string, guestId: string, dateFrom: Date, connectionDate: Date) {
         const query = this.buildQueryChatIdsInAndDateFrom(chatId, dateFrom);
         query.$and.push({guest: guestId});
-        return await this.chatModel.update(query, {guestLastConnection: connectionDate}, {multi: true}).exec();
+        await this.chatModel.update(query, {guestLastConnection: connectionDate}, {multi: true}).exec();
     }
 
     private buildQueryChatIdsInAndDateFrom(chatId: string, dateFrom: Date): any {

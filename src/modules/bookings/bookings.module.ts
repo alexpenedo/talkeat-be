@@ -6,13 +6,14 @@ import {BookingsController} from "./bookings.controller";
 import {BookingService} from "./booking.service";
 import {MenusModule} from "../menus/menus.module";
 import {RatesModule} from "../rates/rates.module";
+import {BookingAssembler} from "./assemblers/booking-assembler";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: 'Booking', schema: BookingSchema}]),
         RatesModule,
         forwardRef(() => MenusModule)],
     controllers: [BookingsController],
-    providers: [BookingRepository, BookingService],
+    providers: [BookingRepository, BookingService, BookingAssembler],
     exports: [BookingService]
 })
 

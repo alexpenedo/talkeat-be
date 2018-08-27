@@ -5,25 +5,29 @@ import {ObjectId} from "bson";
 import {Average} from "../interfaces/average.interface";
 import {Injectable} from "@nestjs/common";
 import {RateType} from "../../../common/enums/rate-type.enum";
+import {RateAssembler} from "../assemblers/rate-assembler";
 
 @Injectable()
 export class RateRepository extends BaseRepository<Rate> {
-    constructor(@InjectModel('Rate') private readonly rateModel) {
-        super(rateModel);
+    constructor(@InjectModel('Rate') private readonly rateModel,
+                private readonly rateAssembler: RateAssembler) {
+        super(rateModel, rateAssembler);
     }
 
     async findByHostIdAndTypeHost(hostId: string): Promise<Rate[]> {
-        return await this.rateModel.find({
+        const documents = await this.rateModel.find({
             host: hostId,
             type: RateType.HOST
-        }).populate("guest").sort({date: -1}).limit(10).exec();
+        }).populate("guest host booking").sort({date: -1}).limit(10).exec();
+        return this.rateAssembler.toEntities(documents);
     }
 
     async findByGuestIdAndTypeGuest(hostId: string): Promise<Rate[]> {
-        return await this.rateModel.find({
+        const documents = await this.rateModel.find({
             host: hostId,
             type: RateType.GUEST
-        }).populate("host").sort({date: -1}).limit(10).exec();
+        }).populate("guest host booking").sort({date: -1}).limit(10).exec();
+        return this.rateAssembler.toEntities(documents);
     }
 
     async getAverageByHostId(hostId: string): Promise<Average[]> {
@@ -39,9 +43,10 @@ export class RateRepository extends BaseRepository<Rate> {
     }
 
     async findByBookingId(bookingId: string): Promise<Rate[]> {
-        return await this.rateModel.find({
+        const documents = await this.rateModel.find({
             booking: bookingId
-        }).populate("guest host").exec();
+        }).populate("guest host booking").exec();
+        return this.rateAssembler.toEntities(documents);
     }
 
 

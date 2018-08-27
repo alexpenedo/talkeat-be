@@ -2,15 +2,16 @@ import {Document, Model} from 'mongoose';
 import {Entity} from "../domain/entity";
 import {ObjectId} from "bson";
 import {GenericAssembler} from "../assemblers/generic-assembler";
+import {Assembler} from "../assemblers/abstract.assembler";
 
 export class BaseRepository<E extends Entity> {
 
     private model: Model<Document>;
-    private assembler: GenericAssembler<E>;
+    private assembler: Assembler<E>;
 
-    constructor(schemaModel: Model<Document>) {
-        this.model = schemaModel;
-        this.assembler = new GenericAssembler<E>();
+    constructor(model: Model<Document>, assembler?: Assembler<E>) {
+        this.model = model;
+        this.assembler = assembler ? assembler : new GenericAssembler<E>();
     }
 
     async findById(_id: string): Promise<E> {
@@ -18,7 +19,7 @@ export class BaseRepository<E extends Entity> {
     }
 
     async save(item: E): Promise<E> {
-        const itemToSave = new this.model(item);
+        const itemToSave = new this.model(this.assembler.toDocument(item));
         const itemSaved = await itemToSave.save();
         return this.findById(itemSaved._id);
     }
@@ -28,7 +29,7 @@ export class BaseRepository<E extends Entity> {
     }
 
     async update(_id: string, newDocument: E): Promise<E> {
-        await this.model.findByIdAndUpdate(_id, newDocument).lean().exec();
+        await this.model.findByIdAndUpdate(_id, this.assembler.toDocument(newDocument)).lean().exec();
         return await this.findById(_id);
     }
 

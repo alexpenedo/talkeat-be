@@ -21,9 +21,6 @@ export class ChatService {
         };
         let chat: Chat = {
             booking,
-            menuDate: booking.menuDate,
-            host: booking.host,
-            guest: booking.guest,
             messages: [message],
             hostLastConnection: date,
             guestLastConnection: date
@@ -31,8 +28,8 @@ export class ChatService {
 
         chat = await this.chatRepository.save(chat);
         if (socket) {
-            socket.to(chat.guest._id).emit('newChat', chat);
-            socket.to(chat.host._id).emit('newChat', chat);
+            socket.to(chat.booking.guest._id).emit('newChat', chat);
+            socket.to(chat.booking.menu.host._id).emit('newChat', chat);
         }
         return chat;
     }
@@ -51,8 +48,8 @@ export class ChatService {
         }
         const chat: Chat = await this.chatRepository.pushChatMessage(chatId, message);
         if (socket) {
-            socket.to(chat.guest._id).emit('message', chat);
-            socket.to(chat.host._id).emit('message', chat);
+            socket.to(chat.booking.guest._id).emit('message', chat);
+            socket.to(chat.booking.menu.host._id).emit('message', chat);
         }
         return chat;
     }

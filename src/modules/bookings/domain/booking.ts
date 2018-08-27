@@ -9,10 +9,6 @@ export class Booking extends Entity {
     date?: Date;
     @ValidateNested()
     guest: User;
-    @ValidateNested()
-    host: User;
-    @IsDateString()
-    menuDate: Date;
     @IsInt()
     persons: number;
     @IsString()

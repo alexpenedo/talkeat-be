@@ -51,5 +51,4 @@ BookingSchema.pre<any>('save', function (next) {
     next();
 });
 
-
 export default BookingSchema;

@@ -4,11 +4,12 @@ import {RateRepository} from "./repositories/rate.repository";
 import RateSchema from "./schemas/rate.schema";
 import {RatesController} from "./rates.controller";
 import {RateService} from "./rate.service";
+import {RateAssembler} from "./assemblers/rate-assembler";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: 'Rate', schema: RateSchema}])],
     controllers: [RatesController],
-    providers: [RateRepository, RateService],
+    providers: [RateRepository, RateService, RateAssembler],
     exports: [RateService]
 })
 

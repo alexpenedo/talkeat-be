@@ -1,8 +1,8 @@
 import {MenuComponent} from "./menu-component";
 import {
-    IsArray, IsBoolean,
+    IsArray,
+    IsBoolean,
     IsDateString,
-    IsDefined,
     IsInt,
     IsNumberString,
     IsOptional,

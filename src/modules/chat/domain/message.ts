@@ -1,5 +1,5 @@
 import {User} from "../../users/domain/user";
-import {IsDateString, IsInstance, IsOptional, IsString} from "class-validator";
+import {IsDateString, IsOptional, IsString, ValidateNested} from "class-validator";
 import {Entity} from "../../../common/domain/entity";
 
 export class Message extends Entity{
@@ -7,7 +7,7 @@ export class Message extends Entity{
     date: Date;
     @IsString()
     message: string;
-    @IsInstance(User)
+    @ValidateNested()
     @IsOptional()
     from?: User;
 }
