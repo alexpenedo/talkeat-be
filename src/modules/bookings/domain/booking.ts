@@ -22,4 +22,5 @@ export class Booking extends Entity {
     @IsBoolean()
     @IsOptional()
     canceled?: boolean;
+
 }

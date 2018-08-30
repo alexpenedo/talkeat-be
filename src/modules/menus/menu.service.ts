@@ -1,12 +1,10 @@
-import {BadRequestException, forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
+import {forwardRef, Inject, Injectable, NotFoundException} from '@nestjs/common';
 import {MenuRepository} from "./repositories/menu.repository";
 import {Menu} from "./domain/menu";
 import {BookingService} from "../bookings/booking.service";
 import {Booking} from "../bookings/domain/booking";
 import * as _ from 'lodash';
 import {FindLocatedMenusRequest} from "./dto/find-located-menus.request";
-import {FindUserMenusRequest} from "./dto/find-user-menus.request";
-import {Status} from "../../common/enums/status.enum";
 
 @Injectable()
 export class MenuService {
@@ -38,11 +36,11 @@ export class MenuService {
     }
 
 
-    async findHostMenusPending(host: string, page: number, size: number) {
+    async findHostMenusPending(host: string, page: number, size: number):Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateFromOrderByDate(host, new Date(), page, size);
     }
 
-    async findHostMenusFinished(host: string, page: number, size: number) {
+    async findHostMenusFinished(host: string, page: number, size: number):Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateToOrderByDate(host, new Date(), page, size);
     }
 

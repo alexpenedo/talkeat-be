@@ -40,7 +40,7 @@ describe('Users Controller Test', () => {
     it(`/PUT userById`, async () => {
         const user: User = await TestUtil.userBuilder().withValidData().store();
         const token = await TestUtil.getToken(user);
-        const userEdited: User = await TestUtil.userBuilder().withEmail(user.email).withValidData().build();
+        const userEdited: User = await TestUtil.userBuilder().withValidData().withEmail(user.email).build();
         const response: Response = await request(server)
             .put(`/users/${user._id}`)
             .set('Authorization', `Bearer ${token}`)

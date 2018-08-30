@@ -1,6 +1,5 @@
 import {Document, Model} from 'mongoose';
 import {Entity} from "../domain/entity";
-import {ObjectId} from "bson";
 import {GenericAssembler} from "../assemblers/generic-assembler";
 import {Assembler} from "../assemblers/abstract.assembler";
 
@@ -36,9 +35,4 @@ export class BaseRepository<E extends Entity> {
     delete(_id: string): Promise<E> {
         return this.model.findByIdAndRemove(_id).lean().exec() as Promise<E>;
     }
-
-    private toObjectId(_id: string): ObjectId {
-        return ObjectId.createFromHexString(_id)
-    }
-
 }
