@@ -4,7 +4,7 @@ node {
     }
 
     stage('Compile/Test') {
-         docker.image('node:10').withRun('echo "node 10"') { c ->
+         docker.image('node:10') { c ->
              sh 'npm install && npm run build'
              sh 'npm run test'
         }
