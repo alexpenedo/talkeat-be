@@ -29,7 +29,7 @@ export default class TestUtil {
     private static config;
 
     static async run() {
-        process.env.NODE_ENV = 'test';
+        // process.env.NODE_ENV = 'test';
         this.module = await Test.createTestingModule({
             imports: [ApplicationModule,
                 MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
