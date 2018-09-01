@@ -4,7 +4,7 @@ node {
     }
 
     stage('Compile/Test') {
-        docker.image('mongo:3.2') { c ->
+        docker.image('mongo:3.2').withRun('-e "MONGO_INITDB_ROOT_PASSWORD=my-secret-pw"') { c ->
              docker.image('node:10').withRun('-e "MONGO_HOST=mongodb://db"').inside("--link ${c.id}:db") {
              withEnv([
                      'npm_config_cache=npm-cache',
