@@ -17,7 +17,6 @@ export class MenuRepository extends BaseRepository<Menu> {
     async findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(
         coordinates: number[], startDate: Date, endDate: Date,
         persons: number, menuIds: string[], userId: string, sort: Sort, page: number, size: number): Promise<Menu[]> {
-
         const aggregate = this.menuModel.aggregate().near(this.geoNearStage(coordinates))
             .match(this.matchStage(persons, startDate, endDate, menuIds, userId));
         if (sort == Sort.RATING) {
