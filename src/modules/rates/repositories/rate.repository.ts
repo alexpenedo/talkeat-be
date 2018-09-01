@@ -5,7 +5,7 @@ import {ObjectId} from "bson";
 import {Average} from "../interfaces/average.interface";
 import {Injectable} from "@nestjs/common";
 import {RateType} from "../../../common/enums/rate-type.enum";
-import {RateAssembler} from "../assemblers/rate-assembler";
+import {RateAssembler} from "../../../common/assemblers/rate-assembler";
 
 @Injectable()
 export class RateRepository extends BaseRepository<Rate> {

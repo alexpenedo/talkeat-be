@@ -2,7 +2,7 @@ import {BaseRepository} from "../../../common/repositories/base.repository";
 import {InjectModel} from "@nestjs/mongoose";
 import {Booking} from "../domain/booking";
 import {Injectable} from "@nestjs/common";
-import {BookingAssembler} from "../assemblers/booking-assembler";
+import {BookingAssembler} from "../../../common/assemblers/booking-assembler";
 
 @Injectable()
 export class BookingRepository extends BaseRepository<Booking> {
@@ -13,24 +13,6 @@ export class BookingRepository extends BaseRepository<Booking> {
 
     async findByMenuId(menuId: string): Promise<Booking[]> {
         const documents = await this.bookingModel.find({menu: menuId}).populate("menu host guest rate").sort({date: -1}).exec();
-        return this.bookingAssembler.toEntities(documents);
-    }
-
-    async findByGuestIdOrderByDateDesc(guestId: string): Promise<Booking[]> {
-        const documents = await this.bookingModel.find({guest: guestId}).populate("menu host guest rate").sort({date: -1}).exec();
-        return this.bookingAssembler.toEntities(documents);
-    }
-
-    async findByHostIdOrderByDateDesc(hostId: string): Promise<Booking[]> {
-        const documents = await this.bookingModel.find({host: hostId}).populate("menu host guest rate").sort({date: -1}).exec();
-        return this.bookingAssembler.toEntities(documents);
-    }
-
-    async findByHostIdOrGuestIdOrderByDateDesc(hostId: string, guestId: string): Promise<Booking[]> {
-        const documents = await this.bookingModel.find({
-            $or: [{host: hostId},
-                {guest: guestId}]
-        }).populate("menu host guest rate").sort({date: -1}).exec();
         return this.bookingAssembler.toEntities(documents);
     }
 

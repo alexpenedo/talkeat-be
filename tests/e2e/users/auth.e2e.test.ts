@@ -4,12 +4,17 @@ import {User} from "../../../src/modules/users/domain/user";
 import TestUtil from "../test-util";
 import * as bcrypt from "bcrypt";
 
-describe('Auth Controller test', () => {
+describe('Auth Controller test', async () => {
     let server;
-    beforeAll(async () => {
+    beforeEach(async (done) => {
         server = await TestUtil.run();
+        done();
     });
-
+    afterEach(async (done) => {
+        await TestUtil.clearDatabase();
+        await server.close();
+        done();
+    });
     it(`/POST login`, async () => {
         const password = 'testPassword';
         const encryptedPassword = bcrypt.hashSync(password, 10);
@@ -22,9 +27,5 @@ describe('Auth Controller test', () => {
             .post('/auth/login')
             .send(credentials);
         expect(response.status).toBe(201);
-    });
-
-    afterAll(async () => {
-        await server.close();
     });
 });

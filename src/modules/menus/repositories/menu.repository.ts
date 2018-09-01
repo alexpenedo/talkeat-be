@@ -5,11 +5,13 @@ import {Injectable} from "@nestjs/common";
 import {Sort} from "../../../common/enums/sort.enum";
 import {ObjectId} from "bson";
 import {RateType} from "../../../common/enums/rate-type.enum";
+import {MenuAssembler} from "../../../common/assemblers/menu-assembler";
 
 @Injectable()
 export class MenuRepository extends BaseRepository<Menu> {
-    constructor(@InjectModel('Menu') private readonly menuModel) {
-        super(menuModel);
+    constructor(@InjectModel('Menu') private readonly menuModel,
+                private readonly menuAssembler: MenuAssembler) {
+        super(menuModel, menuAssembler);
     }
 
     async findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(

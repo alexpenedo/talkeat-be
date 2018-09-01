@@ -3,12 +3,13 @@ import * as faker from 'faker';
 import {Injectable} from "@nestjs/common";
 import {MenuRepository} from "../../src/modules/menus/repositories/menu.repository";
 import {Menu} from "../../src/modules/menus/domain/menu";
+import {UserBuilder} from "./user.builder";
 
 @Injectable()
 export class MenuBuilder {
     private _menu: Menu;
 
-    constructor(private menuRepository: MenuRepository) {
+    constructor(private menuRepository: MenuRepository, private userBuilder: UserBuilder) {
         this._menu = new Menu();
     }
 
@@ -87,13 +88,13 @@ export class MenuBuilder {
         return this;
     }
 
-    withValidData(host: User): MenuBuilder {
+    withValidData(): MenuBuilder {
         const name = faker.name.jobTitle();
         const description = faker.lorem.paragraph();
         const starters = [{name: faker.name.jobTitle()}];
         const mains = [{name: faker.name.jobTitle()}];
         const desserts = [{name: faker.name.jobTitle()}];
-        const guests = faker.random.number(5);
+        const guests = faker.random.number({min: 1, max: 5});
         const price = faker.finance.amount(5, 20, 2).toString();
         const date = faker.date.future();
         const postalCode = faker.address.zipCode();
@@ -111,15 +112,18 @@ export class MenuBuilder {
             .withPostalCode(postalCode)
             .withAddress(address)
             .withCountry(country)
-            .withLocation(location)
-            .withHost(host);
+            .withLocation(location);
     }
 
-    build() {
+    async build(host?: User): Promise<Menu> {
+        host ? this.withHost(host) :
+            this.withHost(await this.userBuilder.withValidData().store());
         return this._menu;
     }
 
-    async store(): Promise<Menu> {
+    async store(host?: User): Promise<Menu> {
+        host ? this.withHost(host) :
+            this.withHost(await this.userBuilder.withValidData().store());
         return await this.menuRepository.save(this._menu);
     }
 }

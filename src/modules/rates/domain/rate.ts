@@ -1,6 +1,7 @@
 import {Booking} from "../../bookings/domain/booking";
-import {IsDateString, IsInt, IsOptional, IsString, ValidateNested} from "class-validator";
+import {IsDateString, IsEnum, IsInstance, IsInt, IsOptional, IsString, ValidateNested} from "class-validator";
 import {Entity} from "../../../common/domain/entity";
+import {RateType} from "../../../common/enums/rate-type.enum";
 
 export class Rate extends Entity {
     @IsDateString()
@@ -13,6 +14,6 @@ export class Rate extends Entity {
     comment?: string;
     @IsInt()
     rate: number;
-    @IsString()
-    type: string;
+    @IsEnum(RateType)
+    type: RateType;
 }

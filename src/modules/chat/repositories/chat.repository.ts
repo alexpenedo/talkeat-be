@@ -3,7 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Message} from "../domain/message";
 import {Chat} from "../domain/chat";
 import {Injectable} from "@nestjs/common";
-import {ChatAssembler} from "../assemblers/chat-assembler";
+import {ChatAssembler} from "../../../common/assemblers/chat-assembler";
 
 @Injectable()
 export class ChatRepository extends BaseRepository<Chat> {

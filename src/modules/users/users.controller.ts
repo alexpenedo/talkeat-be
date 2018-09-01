@@ -27,15 +27,8 @@ export class UsersController {
     constructor(private readonly userService: UserService) {
     }
 
-    @Get('picture')
-    @ApiOperation({title: 'Get user picture by id '})
-    async getPicture(@Query('id') id: string, @Res() res) {
-        res.sendFile(path.resolve('./uploads/' + id))
-    }
-
     @Get(':id')
     @ApiOperation({title: 'Get user by id'})
-    // @UseGuards(AuthGuard('jwt'))
     async get(@Param('id') id: string): Promise<User> {
         return await this.userService.findById(id);
     }
@@ -43,14 +36,14 @@ export class UsersController {
     @Post()
     @ApiOperation({title: 'Create user'})
     async create(@Body(new ValidationPipe({transform: true})) user: User) {
-        return await this.userService.create(<User>user);
+        return await this.userService.create(user);
     }
 
     @Put(':id')
     @ApiOperation({title: 'Update user by id'})
     @UseGuards(AuthGuard('jwt'))
-    async update(@Param('id') id: string, @Body() user: User) {
-        return await this.userService.update(id, <User>user);
+    async update(@Param('id') id: string, @Body(new ValidationPipe({transform: true})) user: User) {
+        return await this.userService.update(id, user);
     }
 
     @Delete(':id')
@@ -58,6 +51,12 @@ export class UsersController {
     @UseGuards(AuthGuard('jwt'))
     async delete(@Param('id') id: string) {
         return await this.userService.delete(id);
+    }
+
+    @Get('picture')
+    @ApiOperation({title: 'Get user picture by id '})
+    async getPicture(@Query('id') id: string, @Res() res) {
+        res.sendFile(path.resolve('./uploads/' + id))
     }
 
     @Post('picture')

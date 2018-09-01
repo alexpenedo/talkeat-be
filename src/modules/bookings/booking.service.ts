@@ -30,6 +30,10 @@ export class BookingService {
 
     async confirmBooking(id: string): Promise<Booking> {
         const booking: Booking = await this.findById(id);
+        if (booking.canceled)
+            throw new BadRequestException('Book is canceled');
+        if (booking.confirmed)
+            throw new BadRequestException('Book is already confirmed');
         booking.confirmed = true;
         return await this.update(id, booking);
     }

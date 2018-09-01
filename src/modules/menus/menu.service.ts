@@ -36,11 +36,11 @@ export class MenuService {
     }
 
 
-    async findHostMenusPending(host: string, page: number, size: number):Promise<Menu[]> {
+    async findHostMenusPending(host: string, page: number, size: number): Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateFromOrderByDate(host, new Date(), page, size);
     }
 
-    async findHostMenusFinished(host: string, page: number, size: number):Promise<Menu[]> {
+    async findHostMenusFinished(host: string, page: number, size: number): Promise<Menu[]> {
         return await this.menuRepository.findByHostIdAndDateToOrderByDate(host, new Date(), page, size);
     }
 
@@ -52,7 +52,7 @@ export class MenuService {
         let menuIds: string[] = [];
         if (userId) {
             const bookings: Booking[] = await this.bookingService.findGuestBookingsPendingIncludingCanceled(userId);
-            menuIds = _.map(bookings, 'menu');
+            menuIds = _.map(bookings, 'menu._id');
         }
         return await this.menuRepository.findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(coordinates,
             startDate, endDate, persons, menuIds, userId, sort, +page, +size);

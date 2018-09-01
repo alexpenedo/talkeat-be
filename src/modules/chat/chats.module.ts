@@ -7,12 +7,13 @@ import {ChatService} from "./chat.service";
 import {BookingsModule} from "../bookings/bookings.module";
 import {ChatGateway} from "./chat.gateway";
 import {AuthModule} from "../auth/auth.module";
-import {ChatAssembler} from "./assemblers/chat-assembler";
+import {AssemblersModule} from "../../common/assemblers/assemblers.module";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: 'Chat', schema: ChatSchema}]), AuthModule, BookingsModule],
+    imports: [MongooseModule.forFeature([{name: 'Chat', schema: ChatSchema}]),
+        AuthModule, BookingsModule, AssemblersModule],
     controllers: [ChatsController],
-    providers: [ChatRepository, ChatService, ChatAssembler, ChatGateway],
+    providers: [ChatRepository, ChatService, ChatGateway],
     exports: [ChatService]
 })
 

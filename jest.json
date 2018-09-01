@@ -9,11 +9,13 @@
   "transform": {
     "^.+\\.tsx?$": "ts-jest"
   },
-  "testRegex": "/e2e/.*\\.(e2e.test).(ts|tsx|js)$",
+  "testRegex": "tests/.*\\.test.ts$",
+  "collectCoverage": true,
   "collectCoverageFrom": [
-    "src/**/*.{js,jsx,tsx,ts}",
+    "src/**/*.{ts,js}",
     "!**/node_modules/**",
-    "!**/vendor/**"
+    "!**/vendor/**",
+    "!**/coverage/**"
   ],
   "coverageReporters": [
     "json",

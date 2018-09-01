@@ -46,10 +46,6 @@ const MenuSchema = new Schema({
         type: String,
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    },
     location: {
         type: [Number],
         index: '2dsphere'

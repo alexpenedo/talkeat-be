@@ -5,9 +5,10 @@ import {UserSchema} from './schemas/user.schema';
 import {Module} from "@nestjs/common";
 import {UserRepository} from "./repositories/user.repository";
 import {ConfigModule} from "../infrastructure/config/config.module";
+import {AssemblersModule} from "../../common/assemblers/assemblers.module";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: 'User', schema: UserSchema}]), ConfigModule],
+    imports: [MongooseModule.forFeature([{name: 'User', schema: UserSchema}]), ConfigModule, AssemblersModule],
     controllers: [UsersController],
     providers: [UserRepository, UserService],
     exports: [UserService]

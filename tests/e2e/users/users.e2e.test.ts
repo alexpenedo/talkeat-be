@@ -3,11 +3,17 @@ import {Response} from 'supertest';
 import {User} from "../../../src/modules/users/domain/user";
 import TestUtil from "../test-util";
 
-describe('Users Controller Test', () => {
+describe('Users Controller Test', async () => {
     let server;
 
-    beforeAll(async () => {
+    beforeEach(async (done) => {
         server = await TestUtil.run();
+        done();
+    });
+    afterEach(async (done) => {
+        await TestUtil.clearDatabase();
+        await server.close();
+        done();
     });
 
     it(`/POST users`, async () => {
@@ -40,7 +46,7 @@ describe('Users Controller Test', () => {
     it(`/PUT userById`, async () => {
         const user: User = await TestUtil.userBuilder().withValidData().store();
         const token = await TestUtil.getToken(user);
-        const userEdited: User = await TestUtil.userBuilder().withValidData().withEmail(user.email).build();
+        const userEdited: User = TestUtil.userBuilder().withValidData().withEmail(user.email).build();
         const response: Response = await request(server)
             .put(`/users/${user._id}`)
             .set('Authorization', `Bearer ${token}`)
@@ -51,9 +57,5 @@ describe('Users Controller Test', () => {
         expect(userEdited.email).toEqual(responseUser.email);
         expect(userEdited.mobileNumber).toEqual(responseUser.mobileNumber);
         expect(responseUser._id).toEqual(user._id);
-    });
-    afterAll(async () => {
-        // TestUtil.clearDatabase();
-        await server.close();
     });
 });

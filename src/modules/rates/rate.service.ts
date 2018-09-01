@@ -30,7 +30,7 @@ export class RateService {
 
     async getHostAverageRating(hostId: string): Promise<number> {
         const averages: Average[] = await this.rateRepository.getAverageByHostId(hostId);
-        return _.last(averages);
+        return _.last(averages).average;
     }
 
     async getHostRates(hostId: string): Promise<Rate[]> {
