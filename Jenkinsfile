@@ -5,8 +5,13 @@ node {
 
     stage('Compile/Test') {
          docker.image('node:10').inside {
-             sh 'npm install && npm run build'
-             sh 'npm run test'
+         withEnv([
+                 'npm_config_cache=npm-cache',
+                 'HOME=.',
+             ]) {
+                 sh 'npm install && npm run build'
+                 sh 'npm run test'
+             }
         }
     }
 
