@@ -1,23 +1,13 @@
-node {
-    def app
-
+pipeline {
     stage('Clone repository') {
         checkout scm
     }
-    agent {
-          docker { image 'node:10' }
-    }
-    stages {
-         stage('Compile') {
-                steps {
-                    sh 'npm install && npm run build'
-                }
-         }
-         stage('Test') {
-                steps {
-                    sh 'npm run test'
-                }
-         }
+
+    stage('Compile/Test') {
+        docker.image('node:10'){
+            sh 'npm install && npm run build'
+            sh 'npm run test'
+        }
     }
     stage('Build image') {
         app = docker.build("alexpenedo/talkeat-be")
