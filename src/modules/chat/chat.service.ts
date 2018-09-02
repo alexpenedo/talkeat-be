@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import {Injectable, NotFoundException} from '@nestjs/common';
 import {ChatRepository} from "./repositories/chat.repository";
 import {Booking} from "../bookings/domain/booking";
 import {Chat} from "./domain/chat";
@@ -35,7 +35,8 @@ export class ChatService {
     }
 
     async getBookingChat(bookingId: string): Promise<Chat> {
-        return this.chatRepository.findByBookingId(bookingId);
+        const booking: Booking = await this.bookingService.findById(bookingId);
+        return this.chatRepository.findByBookingId(booking._id);
     }
 
     async pushMessageOnChat(chatId: string, content: string, socket?, user?: User): Promise<Chat> {
@@ -74,7 +75,11 @@ export class ChatService {
     }
 
     async findById(id: string): Promise<Chat> {
-        return await this.chatRepository.findById(id);
+        const chat: Chat = await this.chatRepository.findById(id);
+        if (!chat) {
+            throw  new NotFoundException('Chat not found');
+        }
+        return chat;
     }
 
     async update(id: string, newValue: Chat): Promise<Chat> {
