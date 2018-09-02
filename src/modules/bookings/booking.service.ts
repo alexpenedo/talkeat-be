@@ -53,7 +53,8 @@ export class BookingService {
     }
 
     async update(id: string, newValue: Booking): Promise<Booking> {
-        return await this.bookingRepository.update(id, newValue);
+        const booking: Booking = await this.findById(id);
+        return await this.bookingRepository.update(booking._id, newValue);
     }
 
     async delete(id: string): Promise<Booking> {

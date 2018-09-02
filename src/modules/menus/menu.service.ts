@@ -25,8 +25,8 @@ export class MenuService {
     }
 
     async update(id: string, newValue: Menu): Promise<Menu> {
-        await this.findById(id);
-        return await this.menuRepository.update(id, newValue);
+        const menu: Menu = await this.findById(id);
+        return await this.menuRepository.update(menu._id, newValue);
     }
 
     async cancelMenu(id: string): Promise<Menu> {

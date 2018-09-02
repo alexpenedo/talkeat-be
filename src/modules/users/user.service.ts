@@ -24,20 +24,25 @@ export class UserService {
     }
 
     async findByEmail(email: string): Promise<User> {
-        return await this.userRepository.findByEmail(email);
+        const user = await this.userRepository.findByEmail(email);
+        if (!user)
+            throw new NotFoundException('User not found');
+        return user;
     }
 
     async update(id: string, newValue: User): Promise<User> {
-        return await this.userRepository.update(id, newValue);
+        const user = await this.userRepository.findById(id);
+        return await this.userRepository.update(user._id, newValue);
     }
 
     async delete(id: string): Promise<User> {
-        return await this.userRepository.delete(id);
+        const user = await this.userRepository.findById(id);
+        return await this.userRepository.delete(user._id);
     }
 
     async savePicture(user: User, filename: string): Promise<User> {
         if (user.picture) {
-            fs.unlink(user.picture, ()=>{
+            fs.unlink(user.picture, () => {
             });
         }
         user.picture = filename;
