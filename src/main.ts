@@ -1,11 +1,13 @@
 import {NestFactory} from '@nestjs/core';
 import {SwaggerModule, DocumentBuilder} from '@nestjs/swagger';
 import {ApplicationModule} from "./app.module";
+import {RedisIoAdapter} from "./modules/infrastructure/adapters/redis-adapter";
 
 declare const module: any;
 
 async function bootstrap() {
     const app = await NestFactory.create(ApplicationModule);
+    app.useWebSocketAdapter(new RedisIoAdapter(app.getHttpServer()));
     app.setGlobalPrefix('api');
     app.enableCors();
 

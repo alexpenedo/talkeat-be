@@ -58,9 +58,17 @@ export class ConfigService {
     get bucketName() {
         return this.envConfig.BUCKET_NAME;
     }
-MON
+
     get tmpFolder() {
         return this.envConfig.TMP_FOLDER;
+    }
+
+    get redisHost(){
+        return this.envConfig.REDIS_HOST;
+    }
+
+    get redisPort(){
+        return this.envConfig.REDIS_PORT;
     }
 
     private validateInput(envConfig: EnvConfig): EnvConfig {
@@ -86,7 +94,9 @@ MON
                 .description('Mongo DB uri'),
             GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
             BUCKET_NAME: Joi.string().required(),
-            TMP_FOLDER: Joi.string().required()
+            TMP_FOLDER: Joi.string().required(),
+            REDIS_HOST: Joi.string().required(),
+            REDIS_PORT: Joi.string().required()
         });
         const {error, value: validatedEnvConfig} = Joi.validate(
             envConfig,
