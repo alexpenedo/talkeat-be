@@ -14,7 +14,7 @@ export async function getToken(user?) {
 //UTILS
 export async function clearDatabase() {
     const config = TestRunner.config;
-    await mongoose.connect(`${config.mongoHost}/${config.mongoSchema}`, {useNewUrlParser: true});
+    await mongoose.connect(config.mongoUri, {useNewUrlParser: true});
     await mongoose.connection.collection('users').remove({});
     await mongoose.connection.collection('menus').remove({});
     await mongoose.connection.collection('bookings').remove({});

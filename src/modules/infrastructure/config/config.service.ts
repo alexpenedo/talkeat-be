@@ -39,12 +39,8 @@ export class ConfigService {
         return this.envConfig.REFRESH_TOKEN_EXPIRES;
     }
 
-    get mongoHost() {
-        return this.envConfig.MONGO_HOST;
-    }
-
-    get mongoSchema() {
-        return this.envConfig.MONGO_SCHEMA;
+    get mongoUri() {
+        return this.envConfig.MONGO_URI;
     }
 
     get mongoDebug() {
@@ -62,7 +58,7 @@ export class ConfigService {
     get bucketName() {
         return this.envConfig.BUCKET_NAME;
     }
-
+MON
     get tmpFolder() {
         return this.envConfig.TMP_FOLDER;
     }
@@ -86,10 +82,8 @@ export class ConfigService {
                 .description('Expiration time token'),
             REFRESH_TOKEN_EXPIRES: Joi.string().required()
                 .description('Refresh time token'),
-            MONGO_HOST: Joi.string().required()
-                .description('Mongo DB host url'),
-            MONGO_SCHEMA: Joi.string().required()
-                .description('Mongo DB schema'),
+            MONGO_URI: Joi.string().required()
+                .description('Mongo DB uri'),
             GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
             BUCKET_NAME: Joi.string().required(),
             TMP_FOLDER: Joi.string().required()
