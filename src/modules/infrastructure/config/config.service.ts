@@ -63,11 +63,11 @@ export class ConfigService {
         return this.envConfig.TMP_FOLDER;
     }
 
-    get redisHost(){
+    get redisHost() {
         return this.envConfig.REDIS_HOST;
     }
 
-    get redisPort(){
+    get redisPort() {
         return this.envConfig.REDIS_PORT;
     }
 
@@ -95,8 +95,8 @@ export class ConfigService {
             GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
             BUCKET_NAME: Joi.string().required(),
             TMP_FOLDER: Joi.string().required(),
-            REDIS_HOST: Joi.string().required(),
-            REDIS_PORT: Joi.string().required()
+            REDIS_HOST: Joi.string(),
+            REDIS_PORT: Joi.string()
         });
         const {error, value: validatedEnvConfig} = Joi.validate(
             envConfig,
