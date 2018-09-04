@@ -31,7 +31,6 @@ describe('ConfigService Unit tests', () => {
             expect(configService.isDevelopmentEnv).toBe(false);
             expect(configService.port).toBe(3977);
             expect(configService.jwtSecret).toBe('test-secret');
-            expect(configService.mongoPort).toBe(27017);
             expect(configService.mongoSchema).toBe('test');
             expect(configService.mongoDebug).toBe(false);
             expect(configService.accessTokenExpires).toBe('1h');
