@@ -66,7 +66,8 @@ export class ConfigService {
     get bucketName() {
         return this.envConfig.BUCKET_NAME;
     }
-    get tmpFolder(){
+
+    get tmpFolder() {
         return this.envConfig.TMP_FOLDER;
     }
 
