@@ -19,7 +19,4 @@ COPY --from=dist /tmp/dist ./dist
 COPY --from=dist /tmp/env ./env
 COPY --from=dist /tmp/credentials ./credentials
 
-HEALTHCHECK --interval=30s --timeout=20s --start-period=1m  \
-      CMD curl -f http://localhost/api/status || exit 1
-
 CMD ["node", "dist/main.js"]
