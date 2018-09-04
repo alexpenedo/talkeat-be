@@ -5,6 +5,7 @@ import {UserRepository} from "../../../../src/modules/users/repositories/user.re
 import {ConfigService} from "../../../../src/modules/infrastructure/config/config.service";
 import {NotFoundException} from "@nestjs/common";
 import {UserBuilder} from "../../../builders/user.builder";
+import {StorageService} from "../../../../src/modules/infrastructure/storage/storage.service";
 
 describe('UserService Unit tests', () => {
     let userService: UserService;
@@ -18,7 +19,7 @@ describe('UserService Unit tests', () => {
             }, {
                 provide: ConfigService,
                 useValue: new ConfigService(`env/test.env`)
-            }],
+            }, StorageService],
         }).compile();
         userBuilder = module.get<UserBuilder>(UserBuilder);
         userService = module.get<UserService>(UserService);

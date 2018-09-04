@@ -4,6 +4,7 @@ import {Test} from "@nestjs/testing";
 import {User} from "../../../../src/modules/users/domain/user";
 import {UserRepository} from "../../../../src/modules/users/repositories/user.repository";
 import {ConfigService} from "../../../../src/modules/infrastructure/config/config.service";
+import {StorageService} from "../../../../src/modules/infrastructure/storage/storage.service";
 
 describe('UsersController', () => {
     let usersController: UsersController;
@@ -18,7 +19,7 @@ describe('UsersController', () => {
             }, {
                 provide: ConfigService,
                 useValue: new ConfigService(`env/test.env`)
-            }],
+            }, StorageService],
         }).compile();
 
         userService = module.get<UserService>(UserService);
