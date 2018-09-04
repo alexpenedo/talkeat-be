@@ -19,7 +19,6 @@ import {ConfigModule} from "../../../../src/modules/infrastructure/config/config
 describe('ConfigService Unit tests', () => {
     let configService: ConfigService;
     beforeEach(async () => {
-        process.env.NODE_ENV = 'test';
         const module = await Test.createTestingModule({
             imports: [ConfigModule]
         }).compile();
