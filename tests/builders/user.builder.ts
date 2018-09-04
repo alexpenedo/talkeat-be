@@ -64,7 +64,8 @@ export class UserBuilder {
     withValidData(): UserBuilder {
         const name = faker.name.firstName();
         const surname = faker.name.lastName();
-        const email = faker.internet.email(name, surname);
+        const email = faker.internet.email(name, surname).toLowerCase()
+            .replace('_', '');
         const mobileNumber = faker.phone.phoneNumber();
         const password = faker.random.alphaNumeric(10);
         const postalCode = faker.address.zipCode();
