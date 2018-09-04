@@ -18,6 +18,6 @@ describe('HealthCheck Controller Test', async () => {
         const response: Response = await request(server)
             .get('/status');
         expect(response.status).toBe(200);
-        expect(response.text).toBe('OK');
+        expect(response.text.substring(0,2)).toBe('OK');
     });
 });
