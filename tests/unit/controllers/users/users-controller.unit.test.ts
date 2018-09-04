@@ -1,9 +1,9 @@
-import {UsersController} from "../../src/modules/users/users.controller";
-import {UserService} from "../../src/modules/users/user.service";
+import {UsersController} from "../../../../src/modules/users/users.controller";
+import {UserService} from "../../../../src/modules/users/user.service";
 import {Test} from "@nestjs/testing";
-import {User} from "../../src/modules/users/domain/user";
-import {UserRepository} from "../../src/modules/users/repositories/user.repository";
-import {ConfigService} from "../../src/modules/infrastructure/config/config.service";
+import {User} from "../../../../src/modules/users/domain/user";
+import {UserRepository} from "../../../../src/modules/users/repositories/user.repository";
+import {ConfigService} from "../../../../src/modules/infrastructure/config/config.service";
 
 describe('UsersController', () => {
     let usersController: UsersController;
@@ -33,7 +33,7 @@ describe('UsersController', () => {
         });
     });
     describe('create', () => {
-        it('should cerate an user', async () => {
+        it('should create an user', async () => {
             const result = new User();
             jest.spyOn(userService, 'create').mockImplementation(() => result);
             expect(await usersController.create(result)).toBe(result);

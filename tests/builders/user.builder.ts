@@ -5,7 +5,7 @@ import {Injectable} from "@nestjs/common";
 
 @Injectable()
 export class UserBuilder {
-    private _user: User;
+    private readonly _user: User;
 
     constructor(private userRepository: UserRepository) {
         this._user = new User();
@@ -64,8 +64,7 @@ export class UserBuilder {
     withValidData(): UserBuilder {
         const name = faker.name.firstName();
         const surname = faker.name.lastName();
-        const email = faker.internet.email(name, surname).toLowerCase()
-            .replace('_', '');
+        const email = faker.internet.email(name, surname);
         const mobileNumber = faker.phone.phoneNumber();
         const password = faker.random.alphaNumeric(10);
         const postalCode = faker.address.zipCode();

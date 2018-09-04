@@ -40,6 +40,7 @@ export class ChatService {
     }
 
     async pushMessageOnChat(chatId: string, content: string, socket?, user?: User): Promise<Chat> {
+        await this.findById(chatId);
         const message: Message = {
             date: new Date(),
             message: content
@@ -55,18 +56,18 @@ export class ChatService {
         return chat;
     }
 
-    async saveChatMessagesOnNotificationMenu(menuId: string, content: string, socket?: any) {
+    async saveChatMessagesOnNotificationMenu(menuId: string, content: string, socket?: any): Promise<Chat[]> {
         const bookings: Booking[] = await this.bookingService.findByMenuId(menuId);
         const bookingIds: string[] = _.map(bookings, '_id');
         const chats: Chat[] = await this.chatRepository.findByBookingIdIn(bookingIds);
-        _.each(chats, (chat: Chat) => {
-            this.pushMessageOnChat(chat._id, content, socket);
-        })
+        return Promise.all(_.each(chats, async (chat: Chat) => {
+            await this.pushMessageOnChat(chat._id, content, socket);
+        }));
     }
 
     async updateUsersConnectionDates(userId: string, chatId: string) {
-        this.chatRepository.updateGuestConnectionDateByChatId(chatId, userId, new Date(), new Date());
-        this.chatRepository.updateHostConnectionDateByChatId(chatId, userId, new Date(), new Date());
+        await this.chatRepository.updateGuestConnectionDateByChatId(chatId, userId, new Date(), new Date());
+        await this.chatRepository.updateHostConnectionDateByChatId(chatId, userId, new Date(), new Date());
     }
 
 
@@ -80,13 +81,5 @@ export class ChatService {
             throw  new NotFoundException('Chat not found');
         }
         return chat;
-    }
-
-    async update(id: string, newValue: Chat): Promise<Chat> {
-        return await this.chatRepository.update(id, newValue);
-    }
-
-    async delete(id: string): Promise<Chat> {
-        return await this.chatRepository.delete(id);
     }
 }

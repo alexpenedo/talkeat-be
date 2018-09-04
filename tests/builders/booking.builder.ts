@@ -9,7 +9,7 @@ import {MenuBuilder} from "./menu.builder";
 
 @Injectable()
 export class BookingBuilder {
-    private _booking: Booking;
+    private readonly _booking: Booking;
 
     constructor(private bookingRepository: BookingRepository, private userBuilder: UserBuilder,
                 private menuBuilder: MenuBuilder) {

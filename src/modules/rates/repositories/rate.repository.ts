@@ -22,9 +22,9 @@ export class RateRepository extends BaseRepository<Rate> {
         return this.rateAssembler.toEntities(documents);
     }
 
-    async findByGuestIdAndTypeGuest(hostId: string): Promise<Rate[]> {
+    async findByGuestIdAndTypeGuest(guestId: string): Promise<Rate[]> {
         const documents = await this.rateModel.find({
-            host: hostId,
+            guest: guestId,
             type: RateType.GUEST
         }).populate("guest host booking").sort({date: -1}).limit(10).exec();
         return this.rateAssembler.toEntities(documents);

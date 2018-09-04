@@ -20,15 +20,21 @@ export class MenuRepository extends BaseRepository<Menu> {
         const aggregate = this.menuModel.aggregate().near(this.geoNearStage(coordinates))
             .match(this.matchStage(persons, startDate, endDate, menuIds, userId));
         if (sort == Sort.RATING) {
-            aggregate.lookup(this.lookupRateStage()).unwind({
-                path: '$rate',
-                preserveNullAndEmptyArrays: true
-            }).match({'rate.type': RateType.HOST}).group(this.groupStage()).sort({average: -1});
+            aggregate.lookup(this.lookupRateStage())
+                .unwind({
+                    path: '$rate',
+                    preserveNullAndEmptyArrays: true
+                })
+                .match({$or: [{rate: null}, {'rate.type': RateType.HOST}]})
+                .group(this.groupStage()).sort({average: -1});
         }
         else if (sort == Sort.PRICE) {
             aggregate.sort({price: 1})
         }
-        return await aggregate.lookup(this.lookupHostStage()).unwind('host').skip(page * size).limit(size).exec();
+        const menus = await aggregate
+            .lookup(this.lookupHostStage()).unwind('host')
+            .skip(page * size).limit(size).exec();
+        return this.menuAssembler.toEntities(menus);
     }
 
     async findByHostIdAndDateFromOrderByDate(userId: string, dateFrom: Date, page: number, size: number): Promise<Menu[]> {
@@ -135,12 +141,13 @@ export class MenuRepository extends BaseRepository<Menu> {
             available: {
                 $first: '$available'
             },
-            average: {
-                $avg: '$rate.rate'
-            },
             distance: {
                 $first: '$distance'
+            },
+            average: {
+                $avg: '$rate.rate'
             }
+
         }
     }
 }

@@ -28,7 +28,7 @@ export class RateAssembler extends Assembler<Rate> {
 
     toEntity(document): Rate {
         const rate: Rate = new Rate();
-        rate._id = document._id ? document._id : undefined;
+        rate._id = document._id ? document._id.toString() : undefined;
         rate.date = document.date;
         rate.booking = this.bookingAssembler.toEntity(document.booking);
         rate.booking.guest = this.userAssembler.toEntity(document.guest);

@@ -1,23 +1,25 @@
 import * as request from 'supertest';
 import {Response} from 'supertest';
 import {User} from "../../../src/modules/users/domain/user";
-import TestUtil from "../test-util";
+import TestRunner from "../../utils/test-runner";
+import {clearDatabase, getToken} from "../../utils/test-utils";
+import {userBuilder} from "../../utils/test-builders";
 
 describe('Users Controller Test', async () => {
     let server;
 
     beforeEach(async (done) => {
-        server = await TestUtil.run();
+        server = await TestRunner.run();
         done();
     });
     afterEach(async (done) => {
-        await TestUtil.clearDatabase();
+        await clearDatabase();
         await server.close();
         done();
     });
 
     it(`/POST users`, async () => {
-        const user: User = TestUtil.userBuilder().withValidData().build();
+        const user: User = userBuilder().withValidData().build();
         const response: Response = await request(server)
             .post('/users')
             .send(user);
@@ -30,8 +32,8 @@ describe('Users Controller Test', async () => {
     });
 
     it(`/GET userById`, async () => {
-        const user: User = await TestUtil.userBuilder().withValidData().store();
-        const token = await TestUtil.getToken(user);
+        const user: User = await userBuilder().withValidData().store();
+        const token = await getToken(user);
         const response: Response = await request(server)
             .get(`/users/${user._id}`)
             .set('Authorization', `Bearer ${token}`);
@@ -44,9 +46,9 @@ describe('Users Controller Test', async () => {
     });
 
     it(`/PUT userById`, async () => {
-        const user: User = await TestUtil.userBuilder().withValidData().store();
-        const token = await TestUtil.getToken(user);
-        const userEdited: User = TestUtil.userBuilder().withValidData().withEmail(user.email).build();
+        const user: User = await userBuilder().withValidData().store();
+        const token = await getToken(user);
+        const userEdited: User = userBuilder().withValidData().withEmail(user.email).build();
         const response: Response = await request(server)
             .put(`/users/${user._id}`)
             .set('Authorization', `Bearer ${token}`)

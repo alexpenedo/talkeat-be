@@ -8,7 +8,7 @@ import {BookingBuilder} from "./booking.builder";
 
 @Injectable()
 export class RateBuilder {
-    private _rate: Rate;
+    private readonly _rate: Rate;
 
     constructor(private rateRepository: RateRepository, private bookingBuilder: BookingBuilder) {
         this._rate = new Rate();
@@ -46,12 +46,10 @@ export class RateBuilder {
     }
 
     withValidData(): RateBuilder {
-        const date = faker.date.future();
         const comment = faker.lorem.paragraph();
         const rate = faker.random.number(5);
         const type = rate % 2 == 0 ? RateType.HOST : RateType.GUEST;
-        return this.withDate(date)
-            .withComment(comment)
+        return this.withComment(comment)
             .withRate(rate)
             .withType(type);
     }

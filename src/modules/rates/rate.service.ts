@@ -37,8 +37,8 @@ export class RateService {
         return await this.rateRepository.findByHostIdAndTypeHost(hostId);
     }
 
-    async getGuestRates(hostId: string): Promise<Rate[]> {
-        return await this.rateRepository.findByGuestIdAndTypeGuest(hostId);
+    async getGuestRates(guestId: string): Promise<Rate[]> {
+        return await this.rateRepository.findByGuestIdAndTypeGuest(guestId);
     }
 
     async getBookingRates(bookingId: string): Promise<Rate[]> {

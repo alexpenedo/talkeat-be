@@ -7,7 +7,7 @@ import {UserBuilder} from "./user.builder";
 
 @Injectable()
 export class MenuBuilder {
-    private _menu: Menu;
+    private readonly _menu: Menu;
 
     constructor(private menuRepository: MenuRepository, private userBuilder: UserBuilder) {
         this._menu = new Menu();

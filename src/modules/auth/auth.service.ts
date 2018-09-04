@@ -22,8 +22,6 @@ export class AuthService {
 
     async sign(credentials: LoginRequest): Promise<LoginResponse> {
         const user = await this.usersService.findByEmail(credentials.email);
-        if (!user)
-            throw new NotFoundException('The specified user does not exists');
         const isValid = await this.checkUserPassword(user, credentials.password);
         if (!isValid)
             throw new BadRequestException('The email/password combination is invalid');
@@ -32,8 +30,8 @@ export class AuthService {
         return {tokens, user};
     }
 
-    async refreshToken(payload: JwtPayload): Promise<any> {
-        payload = jwt.decode(payload, this.config.jwtSecret);
+    async refreshToken(refreshToken: string): Promise<any> {
+        const payload: JwtPayload = jwt.decode(refreshToken, this.config.jwtSecret);
         const user: User = await this.jwtService.validateUser(payload);
         const tokens = await this.jwtService.generateToken(user);
         return {tokens, user};

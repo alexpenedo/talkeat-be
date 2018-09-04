@@ -27,6 +27,14 @@ export class UsersController {
     constructor(private readonly userService: UserService) {
     }
 
+
+    @Get('picture')
+    @ApiOperation({title: 'Get user picture by id '})
+    async getPicture(@Query('id') picture: string, @Res() res) {
+        const file: string = await this.userService.getPicture(picture);
+        res.sendFile(path.resolve(file));
+    }
+
     @Get(':id')
     @ApiOperation({title: 'Get user by id'})
     async get(@Param('id') id: string): Promise<User> {
@@ -53,16 +61,10 @@ export class UsersController {
         return await this.userService.delete(id);
     }
 
-    @Get('picture')
-    @ApiOperation({title: 'Get user picture by id '})
-    async getPicture(@Query('id') id: string, @Res() res) {
-        res.sendFile(path.resolve('./uploads/' + id))
-    }
-
     @Post('picture')
     @ApiOperation({title: 'Save picture user'})
     @UseGuards(AuthGuard('jwt'))
-    @UseInterceptors(FileInterceptor('file', {dest: './uploads/'}))
+    @UseInterceptors(FileInterceptor('file', {dest: './tmp/'}))
     async uploadFile(@UploadedFile() file, @Req() request) {
         const user: User = request.user;
         return await this.userService.savePicture(user, file.filename);

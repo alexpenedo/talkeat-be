@@ -36,7 +36,7 @@ export class RatesController {
 
     @Get('average')
     @ApiOperation({title: 'Get host average rating'})
-    async getHostAverage(@Query('hostId') hostId) {
+    async getHostAverage(@Query('hostId') hostId): Promise<number> {
         if (!hostId) throw new BadRequestException('Param hostId is required');
         return await this.rateService.getHostAverageRating(hostId);
     }
@@ -51,7 +51,7 @@ export class RatesController {
     @Get(':id')
     @ApiOperation({title: 'Get rate by id'})
     @UseGuards(AuthGuard('jwt'))
-    async get(@Param('id') id) {
+    async get(@Param('id') id): Promise<Rate> {
         return await this.rateService.findById(id);
     }
 

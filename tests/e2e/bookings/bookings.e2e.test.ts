@@ -3,25 +3,27 @@ import {Response} from 'supertest';
 import * as _ from 'lodash';
 import * as faker from 'faker';
 import {User} from "../../../src/modules/users/domain/user";
-import TestUtil from "../test-util";
+import TestRunner from "../../utils/test-runner";
 import {Booking} from "../../../src/modules/bookings/domain/booking";
 import {Status} from "../../../src/common/enums/status.enum";
 import {Menu} from "../../../src/modules/menus/domain/menu";
+import {clearDatabase, getToken} from "../../utils/test-utils";
+import {bookingBuilder, menuBuilder, userBuilder} from "../../utils/test-builders";
 
 describe('Bookings Controller Test', async () => {
     let server;
     beforeEach(async (done) => {
-        server = await TestUtil.run();
+        server = await TestRunner.run();
         done();
     });
     afterEach(async (done) => {
-        await TestUtil.clearDatabase();
+        await clearDatabase();
         await server.close();
         done();
     });
     it(`/POST booking: should create booking`, async () => {
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().build();
-        const token = await TestUtil.getToken();
+        const booking: Booking = await bookingBuilder().withValidData().build();
+        const token = await getToken();
         const response: Response = await request(server)
             .post('/bookings')
             .send(booking)
@@ -32,8 +34,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/GET booking: should get booking by id`, async () => {
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().store();
-        const token = await TestUtil.getToken();
+        const booking: Booking = await bookingBuilder().withValidData().store();
+        const token = await getToken();
         const response: Response = await request(server)
             .get(`/bookings/${booking._id}`)
             .set('Authorization', `Bearer ${token}`);
@@ -43,9 +45,9 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/PUT booking: should update booking by id`, async () => {
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().store();
-        const bookingUpdated: Booking = await TestUtil.bookingBuilder().withValidData().build();
-        const token = await TestUtil.getToken();
+        const booking: Booking = await bookingBuilder().withValidData().store();
+        const bookingUpdated: Booking = await bookingBuilder().withValidData().build();
+        const token = await getToken();
         const response: Response = await request(server)
             .put(`/bookings/${booking._id}`)
             .send(bookingUpdated)
@@ -56,8 +58,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/POST confirm booking: should confirm booking by id`, async () => {
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().store();
-        const token = await TestUtil.getToken();
+        const booking: Booking = await bookingBuilder().withValidData().store();
+        const token = await getToken();
         const response: Response = await request(server)
             .post(`/bookings/${booking._id}/confirm`)
             .set('Authorization', `Bearer ${token}`);
@@ -67,8 +69,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/POST cancel booking: should confirm booking by id`, async () => {
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().store();
-        const token = await TestUtil.getToken();
+        const booking: Booking = await bookingBuilder().withValidData().store();
+        const token = await getToken();
         const response: Response = await request(server)
             .post(`/bookings/${booking._id}/cancel`)
             .set('Authorization', `Bearer ${token}`);
@@ -78,10 +80,10 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/GET bookings: should get finished bookings confirmed`, async () => {
-        const guest: User = await TestUtil.userBuilder().withValidData().store();
-        const menu: Menu = await TestUtil.menuBuilder().withValidData().withDate(faker.date.past()).store();
-        const booking: Booking = await TestUtil.bookingBuilder().withValidData().withConfirmed(true).store(guest, menu);
-        const token = await TestUtil.getToken(guest);
+        const guest: User = await userBuilder().withValidData().store();
+        const menu: Menu = await menuBuilder().withValidData().withDate(faker.date.past()).store();
+        const booking: Booking = await bookingBuilder().withValidData().withConfirmed(true).store(guest, menu);
+        const token = await getToken(guest);
         const response: Response = await request(server)
             .get('/bookings')
             .query({
@@ -98,8 +100,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/GET bookings: shouldn't get finished bookings canceled`, async () => {
-        const booking = await TestUtil.bookingBuilder().withValidData().withCanceled(true).store();
-        const token = await TestUtil.getToken();
+        const booking = await bookingBuilder().withValidData().withCanceled(true).store();
+        const token = await getToken();
         const response: Response = await request(server)
             .get('/bookings')
             .query({
@@ -115,8 +117,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/GET bookings: should get pending not canceled bookings`, async () => {
-        const booking = await TestUtil.bookingBuilder().withValidData().store();
-        const token = await TestUtil.getToken();
+        const booking = await bookingBuilder().withValidData().store();
+        const token = await getToken();
         const response: Response = await request(server)
             .get('/bookings')
             .query({
@@ -133,8 +135,8 @@ describe('Bookings Controller Test', async () => {
     });
 
     it(`/GET bookings: shouldn't get pending canceled bookings`, async () => {
-        const booking = await TestUtil.bookingBuilder().withValidData().withCanceled(true).store();
-        const token = await TestUtil.getToken();
+        const booking = await bookingBuilder().withValidData().withCanceled(true).store();
+        const token = await getToken();
         const response: Response = await request(server)
             .get('/bookings')
             .query({

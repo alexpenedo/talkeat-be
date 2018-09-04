@@ -48,6 +48,8 @@ export class MenuAssembler extends Assembler<Menu> {
         menu.country = document.country;
         menu.location = document.location;
         menu.canceled = document.canceled;
+        menu.average = document.average;
+        menu.distance = document.distance;
         return menu;
     }
 }

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "concurrently 'npm run webpack' 'wait-on dist/server.js && npm run start:webpack'",
-    "webpack": "webpack --config webpack.config.js",
+    "webpack": "webpack --env.NODE_ENV=development --config webpack.config.js",
     "start:webpack": "node dist/server",
     "build": "tsc",
     "test": "jest --config=jest.json --runInBand --coverage --forceExit",
@@ -14,6 +14,7 @@
   "author": "Alex Penedo",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/storage": "^2.0.0",
     "@nestjs/common": "^5.1.0",
     "@nestjs/core": "^5.1.0",
     "@nestjs/mongoose": "^5.1.0",

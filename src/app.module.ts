@@ -10,6 +10,7 @@ import {ConfigModule} from "./modules/infrastructure/config/config.module";
 import {ConfigService} from "./modules/infrastructure/config/config.service";
 import {DatabaseModule} from "./modules/infrastructure/database/database.module";
 import {AssemblersModule} from "./common/assemblers/assemblers.module";
+import {StorageModule} from "./modules/infrastructure/storage/storage.module";
 
 const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
 
@@ -17,6 +18,7 @@ const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
     imports: [
         ConfigModule,
         DatabaseModule.forRoot(config),
+        StorageModule,
         AssemblersModule,
         HealthcheckModule,
         AuthModule,

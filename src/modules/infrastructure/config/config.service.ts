@@ -14,12 +14,13 @@ export class ConfigService {
     get(key: string): string {
         return this.envConfig[key];
     }
+
     get env() {
         return this.envConfig.NODE_ENV;
     }
 
-    get isDevelopmentEnv(){
-        return this.env==='dev';
+    get isDevelopmentEnv() {
+        return this.env === 'development';
     }
 
     get port() {
@@ -30,11 +31,11 @@ export class ConfigService {
         return this.envConfig.JWT_SECRET;
     }
 
-    get accessTokenExpires(){
+    get accessTokenExpires() {
         return this.envConfig.ACCESS_TOKEN_EXPIRES;
     }
 
-    get refreshTokenExpires(){
+    get refreshTokenExpires() {
         return this.envConfig.REFRESH_TOKEN_EXPIRES;
     }
 
@@ -53,8 +54,20 @@ export class ConfigService {
     get mongoDebug() {
         return this.envConfig.MONGOOSE_DEBUG;
     }
-    get bcryptSaltRounds(){
+
+    get bcryptSaltRounds() {
         return 10;
+    }
+
+    get googleCredentials() {
+        return this.envConfig.GOOGLE_APPLICATION_CREDENTIALS;
+    }
+
+    get bucketName() {
+        return this.envConfig.BUCKET_NAME;
+    }
+    get tmpFolder(){
+        return this.envConfig.TMP_FOLDER;
     }
 
     private validateInput(envConfig: EnvConfig): EnvConfig {
@@ -81,7 +94,10 @@ export class ConfigService {
             MONGO_SCHEMA: Joi.string().required()
                 .description('Mongo DB schema'),
             MONGO_PORT: Joi.number()
-                .default(27017)
+                .default(27017),
+            GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
+            BUCKET_NAME: Joi.string().required(),
+            TMP_FOLDER: Joi.string().required()
         });
         const {error, value: validatedEnvConfig} = Joi.validate(
             envConfig,
