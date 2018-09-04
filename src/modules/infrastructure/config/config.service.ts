@@ -43,10 +43,6 @@ export class ConfigService {
         return this.envConfig.MONGO_HOST;
     }
 
-    get mongoPort() {
-        return this.envConfig.MONGO_PORT;
-    }
-
     get mongoSchema() {
         return this.envConfig.MONGO_SCHEMA;
     }
@@ -94,8 +90,6 @@ export class ConfigService {
                 .description('Mongo DB host url'),
             MONGO_SCHEMA: Joi.string().required()
                 .description('Mongo DB schema'),
-            MONGO_PORT: Joi.number()
-                .default(27017),
             GOOGLE_APPLICATION_CREDENTIALS: Joi.string().required(),
             BUCKET_NAME: Joi.string().required(),
             TMP_FOLDER: Joi.string().required()
