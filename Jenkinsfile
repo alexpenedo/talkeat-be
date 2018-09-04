@@ -15,7 +15,7 @@ node {
                       sh 'npm run test'
                  }
             }
-    }
+        }
     }
 
      stage('Build image') {

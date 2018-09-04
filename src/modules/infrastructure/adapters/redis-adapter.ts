@@ -4,12 +4,14 @@ import {ConfigService} from "../config/config.service";
 
 const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
 
-const redisAdapter = redisIoAdapter({host: config.redisHost, port: config.redisPort});
+const redisAdapter = config.redisHost ? redisIoAdapter({host: config.redisHost, port: config.redisPort}) : undefined;
 
 export class RedisIoAdapter extends IoAdapter {
     createIOServer(port: number, options?: any): any {
         const server = super.createIOServer(port, options);
-        server.adapter(redisAdapter);
+        if (redisAdapter) {
+            server.adapter(redisAdapter);
+        }
         return server;
     }
 }
