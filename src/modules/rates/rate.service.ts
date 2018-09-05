@@ -30,7 +30,11 @@ export class RateService {
 
     async getHostAverageRating(hostId: string): Promise<number> {
         const averages: Average[] = await this.rateRepository.getAverageByHostId(hostId);
+        if (!averages || averages.length == 0) {
+            throw new NotFoundException('There are not valorations yet');
+        }
         return _.last(averages).average;
+
     }
 
     async getHostRates(hostId: string): Promise<Rate[]> {
