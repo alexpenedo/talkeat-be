@@ -1,17 +1,22 @@
 version: '3.6'
 services:
   talkeat-be:
-    image: prueba-be
+    image: talkeat-be
     ports:
     - "80:80"
     environment:
     - NODE_ENV=production
+    - MONGO_URI=mongodb://mongodb:27017/talkeat
     networks:
       - internal
   mongodb:
     image: mongo
     volumes:
     - /opt/mongodb:/data/db
+    networks:
+    - internal
+  redis:
+    image: redis
     networks:
     - internal
 networks:
