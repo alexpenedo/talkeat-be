@@ -3,7 +3,7 @@ services:
   talkeat-be:
     image: talkeat-be
     ports:
-    - "80:80"
+    - "3977:80"
     environment:
     - NODE_ENV=production
     - MONGO_URI=mongodb://mongodb:27017/talkeat
