@@ -21,8 +21,14 @@ export class StorageService {
     }
 
     async getFile(filename) {
-        await this.storage.bucket(this.bucketName).file(filename).download({
-            destination: `${this.config.tmpFolder}${filename}`
-        });
+        try {
+            await this.storage.bucket(this.bucketName).file(filename).download({
+                destination: `${this.config.tmpFolder}${filename}`
+            });
+        } catch (e) {
+            await this.storage.bucket(this.bucketName).file('default').download({
+                destination: `${this.config.tmpFolder}${filename}`
+            });
+        }
     }
 }
