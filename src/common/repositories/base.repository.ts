@@ -1,6 +1,7 @@
 import {Document, Model} from 'mongoose';
 import {Entity} from "../domain/entity";
 import {Assembler} from "../assemblers/abstract.assembler";
+import {ObjectId} from "bson";
 
 export class BaseRepository<E extends Entity> {
 
@@ -12,8 +13,10 @@ export class BaseRepository<E extends Entity> {
         this.assembler = assembler;
     }
 
-    async findById(_id: string): Promise<E> {
-        return this.assembler.toEntity(await this.model.findById(_id).lean().exec());
+    async findById(id: string): Promise<E> {
+        const _id = this.toObjectId(id);
+        if (_id)
+            return this.assembler.toEntity(await this.model.findById(_id).lean().exec());
     }
 
     async save(item: E): Promise<E> {
@@ -26,12 +29,26 @@ export class BaseRepository<E extends Entity> {
         return this.assembler.toEntities(await this.model.find({}).lean().exec());
     }
 
-    async update(_id: string, newDocument: E): Promise<E> {
-        await this.model.findByIdAndUpdate(_id, newDocument).lean().exec();
-        return await this.findById(_id);
+    async update(id: string, newDocument: E): Promise<E> {
+        const _id = this.toObjectId(id);
+        if (_id) {
+            await this.model.findByIdAndUpdate(_id, newDocument).lean().exec();
+            return await this.findById(id);
+        }
     }
 
-    async delete(_id: string): Promise<E> {
-        return this.model.findByIdAndRemove(_id).lean().exec() as Promise<E>;
+    async delete(id: string): Promise<E> {
+        const _id = this.toObjectId(id);
+        if (_id) {
+            return this.model.findByIdAndRemove(_id).lean().exec() as Promise<E>;
+        }
+    }
+
+    private toObjectId(_id: string): ObjectId {
+        try {
+            return new ObjectId(_id);
+        } catch (e) {
+            return null;
+        }
     }
 }

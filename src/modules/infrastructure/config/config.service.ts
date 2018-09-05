@@ -7,8 +7,8 @@ export class ConfigService {
     private readonly envConfig: EnvConfig;
 
     constructor(filePath: string) {
-        const config = dotenv.parse(fs.readFileSync(filePath));
-        this.envConfig = this.validateInput(config);
+        const config = dotenv.config({path: filePath});
+        this.envConfig = this.validateInput(config.parsed);
     }
 
     get(key: string): string {
@@ -24,27 +24,27 @@ export class ConfigService {
     }
 
     get port() {
-        return this.envConfig.PORT;
+        return process.env.PORT;
     }
 
     get jwtSecret() {
-        return this.envConfig.JWT_SECRET;
+        return process.env.JWT_SECRET;
     }
 
     get accessTokenExpires() {
-        return this.envConfig.ACCESS_TOKEN_EXPIRES;
+        return process.env.ACCESS_TOKEN_EXPIRES;
     }
 
     get refreshTokenExpires() {
-        return this.envConfig.REFRESH_TOKEN_EXPIRES;
+        return process.env.REFRESH_TOKEN_EXPIRES;
     }
 
     get mongoUri() {
-        return this.envConfig.MONGO_URI;
+        return process.env.MONGO_URI;
     }
 
     get mongoDebug() {
-        return this.envConfig.MONGOOSE_DEBUG;
+        return process.env.MONGOOSE_DEBUG;
     }
 
     get bcryptSaltRounds() {
@@ -52,23 +52,23 @@ export class ConfigService {
     }
 
     get googleCredentials() {
-        return this.envConfig.GOOGLE_APPLICATION_CREDENTIALS;
+        return process.env.GOOGLE_APPLICATION_CREDENTIALS;
     }
 
     get bucketName() {
-        return this.envConfig.BUCKET_NAME;
+        return process.env.BUCKET_NAME;
     }
 
     get tmpFolder() {
-        return this.envConfig.TMP_FOLDER;
+        return process.env.TMP_FOLDER;
     }
 
     get redisHost() {
-        return this.envConfig.REDIS_HOST;
+        return process.env.REDIS_HOST;
     }
 
     get redisPort() {
-        return this.envConfig.REDIS_PORT;
+        return process.env.REDIS_PORT;
     }
 
     private validateInput(envConfig: EnvConfig): EnvConfig {

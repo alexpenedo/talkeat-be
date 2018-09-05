@@ -43,7 +43,7 @@ npm install
 Compile the Typescript code
 
 ```
-npm build
+npm run build
 ```
 
 ## Run
