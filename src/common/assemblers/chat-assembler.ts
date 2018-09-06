@@ -5,12 +5,14 @@ import {Menu} from "../../modules/menus/domain/menu";
 import {UserAssembler} from "./user-assembler";
 import {BookingAssembler} from "./booking-assembler";
 import {MenuAssembler} from "./menu-assembler";
+import {MessageAssembler} from "./message-assembler";
 
 @Injectable()
 export class ChatAssembler extends Assembler<Chat> {
     constructor(private readonly userAssembler: UserAssembler,
                 private readonly bookingAssembler: BookingAssembler,
-                private readonly menuAssembler: MenuAssembler) {
+                private readonly menuAssembler: MenuAssembler,
+                private readonly messageAssembler: MessageAssembler) {
         super();
     }
 
@@ -35,7 +37,7 @@ export class ChatAssembler extends Assembler<Chat> {
         chat.booking.guest = this.userAssembler.toEntity(document.guest);
         chat.booking.menu = this.menuAssembler.toEntity(document.booking.menu);
         chat.date = document.date;
-        chat.messages = document.messages;
+        chat.messages = this.messageAssembler.toEntities(document.messages);
         chat.hostLastConnection = document.hostLastConnection;
         chat.guestLastConnection = document.guestLastConnection;
         chat.deleted = document.deleted;
