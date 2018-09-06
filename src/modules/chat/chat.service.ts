@@ -50,10 +50,13 @@ export class ChatService {
         }
         const chat: Chat = await this.chatRepository.pushChatMessage(chatId, message);
         if (socket) {
-            if (user._id == chat.booking.menu.host._id) {
+            if (user && user._id == chat.booking.menu.host._id) {
                 socket.to(chat.booking.guest._id).emit('message', chat);
+            } else if (user && user._id == chat.booking.guest._id) {
+                socket.to(chat.booking.menu.host._id).emit('message', chat);
             }
-            if (user._id == chat.booking.guest._id) {
+            else {
+                socket.to(chat.booking.guest._id).emit('message', chat);
                 socket.to(chat.booking.menu.host._id).emit('message', chat);
             }
         }

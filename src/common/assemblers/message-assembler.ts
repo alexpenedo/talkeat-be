@@ -13,7 +13,7 @@ export class MessageAssembler extends Assembler<Message> {
         const message: Message = new Message();
         message._id = document._id ? document._id.toString() : undefined;
         message.date = document.date;
-        message.from = this.userAssembler.toEntity(document.from);
+        message.from = message.from ? this.userAssembler.toEntity(document.from) : undefined;
         message.message = document.message;
         return message;
     }

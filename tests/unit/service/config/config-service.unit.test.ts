@@ -29,9 +29,9 @@ describe('ConfigService Unit tests', () => {
         it('should get test.env values', async () => {
             expect(configService.env).toBe(process.env.NODE_ENV);
             expect(configService.isDevelopmentEnv).toBe(false);
-            expect(configService.port).toBe(3977);
+            expect(configService.port).toEqual('3977');
             expect(configService.jwtSecret).toBe('test-secret');
-            expect(configService.mongoDebug).toBe(false);
+            expect(configService.mongoDebug).toBe('false');
             expect(configService.accessTokenExpires).toBe('1h');
             expect(configService.refreshTokenExpires).toBe('8h');
             expect(configService.bcryptSaltRounds).toBe(10);

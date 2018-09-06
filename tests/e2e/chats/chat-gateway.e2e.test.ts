@@ -26,12 +26,15 @@ describe('Chat Gateway Test', async () => {
     });
     it(`should handle firstMessage and create chat`, async () => {
         const booking = await bookingBuilder().withValidData().store();
-        let socket = io.connect(socketUrl, {
+        let socketguest = io.connect(socketUrl, {
             query: {token: await getToken(booking.guest)}
         });
-        socket.emit('firstMessage', booking);
+        let sockethost = io.connect(socketUrl, {
+            query: {token: await getToken(booking.menu.host)}
+        });
+        socketguest.emit('firstMessage', booking);
         await new Promise(resolve => {
-            socket.on('newChat', (chat: Chat) => {
+            sockethost.on('newChat', (chat: Chat) => {
                 expect(chat.booking._id).toBe(booking._id);
                 resolve();
             });
@@ -40,18 +43,21 @@ describe('Chat Gateway Test', async () => {
 
     it(`should handle message`, async () => {
         const chat = await chatBuilder().withValidData().store();
-        let socket = io.connect(socketUrl, {
+        let socketguest = io.connect(socketUrl, {
             query: {token: await getToken(chat.booking.guest)}
+        });
+        let sockethost = io.connect(socketUrl, {
+            query: {token: await getToken(chat.booking.menu.host)}
         });
         const message = {
             chat,
-            from: chat.booking.guest._id,
+            from: chat.booking.guest,
             message: faker.lorem.paragraph(),
             date: new Date()
         };
-        socket.emit('message', message);
+        socketguest.emit('message', message);
         await new Promise(resolve => {
-            socket.on('message', (data: Chat) => {
+            sockethost.on('message', (data: Chat) => {
                 expect(_.last(data.messages).message).toBe(message.message);
                 resolve();
             });
@@ -62,17 +68,19 @@ describe('Chat Gateway Test', async () => {
     it(`should send notification message on update menu`, async () => {
         const chat = await chatBuilder().withValidData().store();
 
-        let socket = io.connect(socketUrl, {
+        let socketguest = io.connect(socketUrl, {
             query: {token: await getToken(chat.booking.guest)}
         });
-
+        let sockethost = io.connect(socketUrl, {
+            query: {token: await getToken(chat.booking.menu.host)}
+        });
         const notification = {
             menu: chat.booking.menu,
             notification: Notification.UPDATE
         };
-        socket.emit('notification', notification);
+        sockethost.emit('notification', notification);
         await new Promise(resolve => {
-            socket.on('message', (data: Chat) => {
+            socketguest.on('message', (data: Chat) => {
                 expect(_.last(data.messages).message).toBe('Menu updated by host. Please, check the changes');
                 resolve();
             });
@@ -83,17 +91,20 @@ describe('Chat Gateway Test', async () => {
     it(`should send notification message on cancel menu`, async () => {
         const chat = await chatBuilder().withValidData().store();
 
-        let socket = io.connect(socketUrl, {
+        let socketguest = io.connect(socketUrl, {
             query: {token: await getToken(chat.booking.guest)}
+        });
+        let sockethost = io.connect(socketUrl, {
+            query: {token: await getToken(chat.booking.menu.host)}
         });
 
         const notification = {
             menu: chat.booking.menu,
             notification: Notification.CANCEL
         };
-        socket.emit('notification', notification);
+        sockethost.emit('notification', notification);
         await new Promise(resolve => {
-            socket.on('message', (data: Chat) => {
+            socketguest.on('message', (data: Chat) => {
                 expect(_.last(data.messages).message).toBe('Menu canceled by host. Sorry.');
                 resolve();
             });
@@ -103,13 +114,15 @@ describe('Chat Gateway Test', async () => {
     it(`should send booking state change on confirm booking`, async () => {
         const chat = await chatBuilder().withValidData().store();
 
-        let socket = io.connect(socketUrl, {
+        let socketguest = io.connect(socketUrl, {
             query: {token: await getToken(chat.booking.guest)}
         });
-
-        socket.emit('changeBookingState', chat.booking);
+        let sockethost = io.connect(socketUrl, {
+            query: {token: await getToken(chat.booking.menu.host)}
+        });
+        sockethost.emit('changeBookingState', chat.booking);
         await new Promise(resolve => {
-            socket.on('changeBookingState', (data: Chat) => {
+            socketguest.on('changeBookingState', (data: Chat) => {
                 expect(data._id).toBe(chat._id);
                 resolve();
             });
