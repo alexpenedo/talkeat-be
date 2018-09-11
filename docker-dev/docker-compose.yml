@@ -1,0 +1,29 @@
+version: '3.6'
+services:
+  talkeat-be:
+    build: .
+    command: npm start
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+    - "3977:3977"
+    environment:
+    - NODE_ENV=development
+    - MONGO_URI=mongodb://mongodb:27017/talkeat
+    - REDIS_HOST=redis
+    networks:
+      - internal
+  mongodb:
+    image: mongo
+    volumes:
+    - /opt/mongodb:/data/db
+    networks:
+    - internal
+  redis:
+    image: redis
+    networks:
+    - internal
+networks:
+  internal:
+    external: false
