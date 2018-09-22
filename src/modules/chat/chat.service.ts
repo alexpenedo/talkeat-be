@@ -16,7 +16,7 @@ export class ChatService {
         const date = new Date();
         const message = {
             date,
-            message: "I would like to book this menus",
+            message: "#messageBookMenu",
             from: booking.guest
         };
         let chat: Chat = {

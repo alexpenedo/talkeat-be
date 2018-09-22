@@ -1,7 +1,6 @@
 import {Assembler} from "./abstract.assembler";
 import {Injectable} from "@nestjs/common";
 import {Chat} from "../../modules/chat/domain/chat";
-import {Menu} from "../../modules/menus/domain/menu";
 import {UserAssembler} from "./user-assembler";
 import {BookingAssembler} from "./booking-assembler";
 import {MenuAssembler} from "./menu-assembler";

@@ -46,10 +46,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         const notification: Notification = data.notification as Notification;
         let content: string;
         if (notification == Notification.UPDATE) {
-            content = 'Menu updated by host. Please, check the changes';
+            content = '#messageMenuUpdated';
         }
         else if (notification == Notification.CANCEL) {
-            content = 'Menu canceled by host. Sorry.';
+            content = '#messageMenuCanceled';
         }
         this.chatService.saveChatMessagesOnNotificationMenu(menu._id, content, this.server);
 

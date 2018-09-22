@@ -11,13 +11,12 @@ import {ConfigService} from "./modules/infrastructure/config/config.service";
 import {DatabaseModule} from "./modules/infrastructure/database/database.module";
 import {AssemblersModule} from "./common/assemblers/assemblers.module";
 import {StorageModule} from "./modules/infrastructure/storage/storage.module";
-
-const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
+import {DemoModule} from "./modules/demo/demo.module";
 
 @Module({
     imports: [
         ConfigModule,
-        DatabaseModule.forRoot(config),
+        DatabaseModule,
         StorageModule,
         AssemblersModule,
         HealthcheckModule,
@@ -27,8 +26,7 @@ const config = new ConfigService(`env/${process.env.NODE_ENV}.env`);
         BookingsModule,
         RatesModule,
         ChatsModule,
-    ],
-    exports: [ConfigModule]
+    ]
 })
 export class ApplicationModule {
 }

@@ -1,5 +1,4 @@
 import * as dotenv from 'dotenv';
-import * as fs from 'fs';
 import * as Joi from 'joi';
 import {EnvConfig} from "./interfaces/env-config.interface";
 
@@ -71,6 +70,10 @@ export class ConfigService {
         return process.env.REDIS_PORT;
     }
 
+    get demo() {
+        return process.env.DEMO;
+    }
+
     private validateInput(envConfig: EnvConfig): EnvConfig {
         const envVarsSchema = Joi.object({
             NODE_ENV: Joi.string()
@@ -96,7 +99,8 @@ export class ConfigService {
             BUCKET_NAME: Joi.string().required(),
             TMP_FOLDER: Joi.string().required(),
             REDIS_HOST: Joi.string(),
-            REDIS_PORT: Joi.string()
+            REDIS_PORT: Joi.string(),
+            DEMO: Joi.boolean()
         });
         const {error, value: validatedEnvConfig} = Joi.validate(
             envConfig,

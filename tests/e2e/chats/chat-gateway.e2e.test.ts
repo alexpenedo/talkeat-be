@@ -81,7 +81,7 @@ describe('Chat Gateway Test', async () => {
         sockethost.emit('notification', notification);
         await new Promise(resolve => {
             socketguest.on('message', (data: Chat) => {
-                expect(_.last(data.messages).message).toBe('Menu updated by host. Please, check the changes');
+                expect(_.last(data.messages).message).toBe('#messageMenuUpdated');
                 resolve();
             });
         });
@@ -105,7 +105,7 @@ describe('Chat Gateway Test', async () => {
         sockethost.emit('notification', notification);
         await new Promise(resolve => {
             socketguest.on('message', (data: Chat) => {
-                expect(_.last(data.messages).message).toBe('Menu canceled by host. Sorry.');
+                expect(_.last(data.messages).message).toBe('#messageMenuCanceled');
                 resolve();
             });
         });
