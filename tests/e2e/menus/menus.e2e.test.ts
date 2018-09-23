@@ -8,9 +8,10 @@ import * as faker from 'faker';
 import {Sort} from "../../../src/common/enums/sort.enum";
 import * as _ from 'lodash';
 import {clearDatabase, getToken} from "../../utils/test-utils";
-import {menuBuilder, rateBuilder, userBuilder} from "../../utils/test-builders";
+import {bookingBuilder, menuBuilder, rateBuilder, userBuilder} from "../../utils/test-builders";
 import {Rate} from "../../../src/modules/rates/domain/rate";
 import {RateType} from "../../../src/common/enums/rate-type.enum";
+import {Booking} from "../../../src/modules/bookings/domain/booking";
 
 describe('Menus Controller Test', async () => {
     let server;
@@ -317,6 +318,31 @@ describe('Menus Controller Test', async () => {
         expect(response.status).toBe(200);
         const menus = response.body as Menu[];
         expect(menus.length).toBe(1);
+    });
+
+    it(`/GET userMenus: should not return menus already booked`, async () => {
+        const user: User = <User>await userBuilder().withValidData().store();
+        const menu: Menu = <Menu>await menuBuilder().withValidData().store();
+        const booking: Booking = <Booking> await bookingBuilder().withValidData().store(user, menu);
+        const token = await getToken(user);
+        const type = menu.date.getHours() >= 18 ? 'dinner' : 'lunch';
+        const response: Response = await request(server)
+            .get('/menus/located')
+            .query({
+                longitude: menu.location[0],
+                latitude: menu.location[1],
+                persons: menu.available,
+                date: menu.date.toISOString(),
+                type,
+                userId: user._id,
+                page: 0,
+                size: 1,
+                sort: Sort.DISTANCE
+            })
+            .set('Authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        const menus = response.body as Menu[];
+        expect(menus.length).toBe(0);
     });
 
     it(`/POST menus`, async () => {

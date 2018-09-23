@@ -6,6 +6,7 @@ import {Sort} from "../../../common/enums/sort.enum";
 import {ObjectId} from "bson";
 import {RateType} from "../../../common/enums/rate-type.enum";
 import {MenuAssembler} from "../../../common/assemblers/menu-assembler";
+import * as _ from 'lodash';
 
 @Injectable()
 export class MenuRepository extends BaseRepository<Menu> {
@@ -17,8 +18,9 @@ export class MenuRepository extends BaseRepository<Menu> {
     async findByCoordinatesAndDatesAndPersonsAndIdNotInMenusAndHostNotUserId(
         coordinates: number[], startDate: Date, endDate: Date,
         persons: number, menuIds: string[], userId: string, sort: Sort, page: number, size: number): Promise<Menu[]> {
+
         const aggregate = this.menuModel.aggregate().near(this.geoNearStage(coordinates))
-            .match(this.matchStage(persons, startDate, endDate, menuIds, userId));
+            .match(this.matchStage(persons, startDate, endDate, _.map(menuIds, (menuId) => new ObjectId(menuId)), userId));
         if (sort == Sort.RATING) {
             aggregate.lookup(this.lookupRateStage())
                 .unwind({
@@ -53,7 +55,7 @@ export class MenuRepository extends BaseRepository<Menu> {
         }).sort({date: -1}).skip(page * size).limit(size).exec();
     }
 
-    private matchStage(persons: number, startDate: Date, endDate: Date, menuIds: string[], userId: string) {
+    private matchStage(persons: number, startDate: Date, endDate: Date, menuIds: ObjectId[], userId: string) {
         const query: any = {
             available: {
                 $gte: +persons
